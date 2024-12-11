@@ -6,11 +6,17 @@ let profile_imgs_collections_list = ["notionists-neutral", "adventurer-neutral",
 const userSchema = mongoose.Schema({
 
     personal_info: {
-        fullname: {
+        firstname: {
             type: String,
             lowercase: true,
             required: true,
-            minlength: [3, 'fullname must be 3 letters long'],
+            minlength: [3, 'first name must be at least 3 letters long'],
+        },
+        lastname: {
+            type: String,
+            lowercase: true,
+            required: true,
+            minlength: [3, 'last name must be at least 3 letters long'],
         },
         email: {
             type: String,
@@ -76,9 +82,9 @@ const userSchema = mongoose.Schema({
         type: Boolean,
         default: false
     },
-    blogs: {
+    articles: {
         type: [ Schema.Types.ObjectId ],
-        ref: 'blogs',
+        ref: 'articles',
         default: [],
     }
 

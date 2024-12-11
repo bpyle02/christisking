@@ -1,8 +1,8 @@
 import mongoose, { Schema } from "mongoose";
 
-const blogSchema = mongoose.Schema({
+const articleSchema = mongoose.Schema({
 
-    blog_id: {
+    article_id: {
         type: String,
         required: true,
         unique: true,
@@ -15,7 +15,7 @@ const blogSchema = mongoose.Schema({
         type: String,
         // required: true,
     },
-    des: {
+    desc: {
         type: String,
         maxlength: 200,
         // required: true
