@@ -20,7 +20,13 @@ admin.initializeApp({
 const server = express();
 
 server.use(express.json());
-server.use(cors())
+server.use(cors({
+    origin: ['https://christisking.info', 'https://www.christisking.info'], // Allow requests from this specific origin
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allow these methods
+    allowedHeaders: ['Content-Type', 'Authorization'], // Allow these headers
+    credentials: true // Allow cookies
+}));
+server.options('*', cors()); // Handle OPTIONS requests for all routes
 
 mongoose.connect(process.env.DB_LOCATION, {
     autoIndex: true
