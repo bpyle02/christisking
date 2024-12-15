@@ -54,7 +54,7 @@ const generateUsername = async (email) => {
     return username;
 }
 
-server.post("/signup", (req, res) => {
+server.post("/signup", cors(), async (req, res) => {
    let { firstname, lastname, email = undefined, password, username } = req.body;
 
     if(firstname.length < 3) {
@@ -101,7 +101,7 @@ server.post("/signup", (req, res) => {
 //    return res.status(200).json({"status": "okay"})
 })
 
-server.post("/signin", (req, res) => {
+server.post("/signin", cors(), async (req, res) => {
     let { email_or_username, password } = req.body;
 
     if (email_or_username) {
@@ -162,7 +162,7 @@ server.post("/signin", (req, res) => {
 
 })
 
-server.post("/google-auth", async (req, res) => {
+server.post("/google-auth", cors(), async (req, res) => {
     let { access_token } = req.body;
 
     console.log(access_token)
