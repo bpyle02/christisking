@@ -19,14 +19,21 @@ admin.initializeApp({
 
 const server = express();
 
-server.use(express.json());
 server.use(cors({
-    origin: ['https://christisking.info', 'https://www.christisking.info', 'https://christisking-server.vercel.app', 'https://christisking-server.vercel.app/google-auth'], // Allow requests from this specific origin
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allow these methods
-    allowedHeaders: ['Content-Type', 'Authorization', 'Access-Control-Allow-Origin'], // Allow these headers
-    credentials: true // Allow cookies
+    origin: function (origin, callback) {
+        if (!origin || ['https://christisking.info', 'https://www.christisking.info', 'https://christisking-server.vercel.app'].indexOf(origin) !== -1) {
+            callback(null, true)
+        } else {
+            callback(new Error('Not allowed by CORS'))
+        }
+    },
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Access-Control-Allow-Origin'],
+    credentials: true
 }));
-server.options('*', cors()); // Handle OPTIONS requests for all routes
+
+// This line is already in your code, but ensure it's set for all routes
+server.options('*', cors());
 
 mongoose.connect(process.env.DB_LOCATION, {
     autoIndex: true
@@ -54,7 +61,7 @@ const generateUsername = async (email) => {
     return username;
 }
 
-server.post("/signup", cors(), async (req, res) => {
+server.post("/signup", async (req, res) => {
    let { firstname, lastname, email = undefined, password, username } = req.body;
 
     if(firstname.length < 3) {
@@ -101,7 +108,7 @@ server.post("/signup", cors(), async (req, res) => {
 //    return res.status(200).json({"status": "okay"})
 })
 
-server.post("/signin", cors(), async (req, res) => {
+server.post("/signin", async (req, res) => {
     let { email_or_username, password } = req.body;
 
     if (email_or_username) {
@@ -162,7 +169,7 @@ server.post("/signin", cors(), async (req, res) => {
 
 })
 
-server.post("/google-auth", cors(), async (req, res) => {
+server.post("/google-auth", async (req, res) => {
     let { access_token } = req.body;
 
     console.log(access_token)
