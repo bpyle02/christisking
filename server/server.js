@@ -19,21 +19,14 @@ admin.initializeApp({
 
 const server = express();
 
+server.use(express.json());
 server.use(cors({
-    origin: function (origin, callback) {
-        if (!origin || ['https://christisking.info', 'https://www.christisking.info', 'https://christisking-server.vercel.app'].indexOf(origin) !== -1) {
-            callback(null, true)
-        } else {
-            callback(new Error('Not allowed by CORS'))
-        }
-    },
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'Access-Control-Allow-Origin'],
-    credentials: true
+    origin: ['https://christisking.info', 'https://www.christisking.info', 'https://christisking-server.vercel.app', 'https://christisking-server.vercel.app/google-auth'], // Allow requests from this specific origin
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allow these methods
+    allowedHeaders: ['Content-Type', 'Authorization', 'Access-Control-Allow-Origin'], // Allow these headers
+    credentials: true // Allow cookies
 }));
-
-// This line is already in your code, but ensure it's set for all routes
-server.options('*', cors());
+server.options('*', cors()); // Handle OPTIONS requests for all routes
 
 mongoose.connect(process.env.DB_LOCATION, {
     autoIndex: true
@@ -170,6 +163,8 @@ server.post("/signin", async (req, res) => {
 })
 
 server.post("/google-auth", async (req, res) => {
+    
+
     let { access_token } = req.body;
 
     console.log(access_token)
