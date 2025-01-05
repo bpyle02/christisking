@@ -7,6 +7,11 @@ import jwt from "jsonwebtoken";
 import cors from 'cors';
 import admin from 'firebase-admin';
 import firebasePrivateKey from './firebase_private_key.json' with {type: "json"}
+import multer from "multer";
+import { MongoClient } from "mongodb";
+
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 
 const PORT = 3000;
 const EMAIL_REGEX = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
@@ -14,19 +19,13 @@ const PASSWORD_REGEX = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/;
 
 admin.initializeApp({
     credentials: admin.credential.cert(firebasePrivateKey),
-    projectId: "christisking-92eae"
+    projectId: "christisking-92eae",
 })
 
 const server = express();
 
 server.use(express.json());
-server.use(cors({
-    origin: ['https://christisking.info', 'https://www.christisking.info', 'https://christisking-server.vercel.app', 'https://christisking-server.vercel.app/google-auth'], // Allow requests from this specific origin
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allow these methods
-    allowedHeaders: ['Content-Type', 'Authorization', 'Access-Control-Allow-Origin'], // Allow these headers
-    credentials: true // Allow cookies
-}));
-server.options('*', cors()); // Handle OPTIONS requests for all routes
+server.use(cors())
 
 mongoose.connect(process.env.DB_LOCATION, {
     autoIndex: true
@@ -97,8 +96,6 @@ server.post("/signup", async (req, res) => {
             return res.status(500).json({"error": err.message})
         })
     })
-
-//    return res.status(200).json({"status": "okay"})
 })
 
 server.post("/signin", async (req, res) => {
@@ -122,8 +119,6 @@ server.post("/signin", async (req, res) => {
                             return res.status(200).json(formatDataToSend(user))
                         }
                     })
-
-                    // return res.json({"status": "Got email document successfully"})
                 })
                 .catch(e => {
                     console.log(e)
@@ -164,12 +159,9 @@ server.post("/signin", async (req, res) => {
 
 server.post("/google-auth", async (req, res) => {
     
-
     let { access_token } = req.body;
 
-    console.log(access_token)
-
-    try {
+    try { 
         const decodedUser = await admin.auth().verifyIdToken(access_token);
         let { email, name, picture } = decodedUser;
         
@@ -202,6 +194,50 @@ server.post("/google-auth", async (req, res) => {
     } catch (e) {
         console.error("Error in Google authentication:", e);
         return res.status(500).json({"error": "Failed to authenticate with Google, please try again"});
+    }
+});
+
+server.post('/upload', upload.single('image'), async (req, res) => {
+    try {
+        const client = new MongoClient(process.env.DB_LOCATION);
+        await client.connect();
+        const db = client.db('christisking-cluster-0');
+        const collection = db.collection('images');
+
+        // Convert the buffer to base64 string for storage
+        const image = {
+            contentType: req.file.mimetype,
+            data: req.file.buffer.toString('base64')
+        };
+
+        const result = await collection.insertOne(image);
+        console.log(result)
+        res.status(200).json({ message: "File uploaded successfully", imageId: result.insertedId });
+        await client.close();
+    } catch (error) {
+        console.error("Failed to upload file:", error);
+        res.status(500).send("Failed to upload file");
+    }
+});
+
+server.get('/image/:id', async (req, res) => {
+    try {
+        const client = new MongoClient(process.env.DB_LOCATION);
+        await client.connect();
+        const db = client.db('christisking-cluster-0');
+        const collection = db.collection('images');
+
+        const image = await collection.findOne({ _id: new mongoose.Types.ObjectId(req.params.id) });
+        if (!image) {
+            return res.status(404).send('Image not found');
+        }
+
+        res.setHeader('Content-Type', image.contentType);
+        res.send(Buffer.from(image.data, 'base64'));
+        await client.close();
+    } catch (error) {
+        console.error("Failed to retrieve file:", error);
+        res.status(500).send("Failed to retrieve file");
     }
 });
 
