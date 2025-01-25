@@ -6,7 +6,7 @@ import { nanoid } from 'nanoid';
 import jwt from 'jsonwebtoken';
 import cors from 'cors';
 import admin from "firebase-admin";
-import serviceAccountKey from "./firebase_private_key.json" assert { type: "json" }
+import serviceAccountKey from "./firebase_private_key.json" with { type: "json" }
 import { getAuth } from "firebase-admin/auth";
 import multer from "multer";
 import { GridFSBucket } from 'mongodb';
