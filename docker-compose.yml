@@ -1,0 +1,43 @@
+version: "3"
+
+services:
+  frontend:
+    build: ./frontend
+    container_name: frontent-react
+    restart: always
+    ports:
+      - "5173:5173"
+    stdin_open: true
+    tty: true
+    depends_on:
+      - server
+    networks:
+      - mern-network
+
+  server:
+    build: ./server
+    container_name: server-node
+    restart: always
+    ports:
+      - "3173:3173"
+    stdin_open: true
+    tty: true
+    depends_on:
+      - database
+    networks:
+      - mern-network
+
+  database:
+    images: mongo
+    container_name: db-mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - /mnt/nas/mongo:/data/db
+    networks:
+      - mern-network
+
+networks:
+  mern-network:
+    driver: bridge
