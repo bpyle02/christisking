@@ -1,11 +1,9 @@
 server/node_modules/*
 server/requests.rest
 server/dist
-server/.env
 
 frontend/node_modules/*
 frontend/dist
-frontent/.env
 
 logs
 *.log
