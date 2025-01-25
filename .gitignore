@@ -1,6 +1,5 @@
 server/node_modules/*
 server/requests.rest
-server/etc/secrets/firebase_private_key.json
 server/dist
 server/.env
 
