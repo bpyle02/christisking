@@ -34,7 +34,9 @@ server.use(cors(
     {
         origin: '*',
         credentials: true,
-        method: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"]
+        methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+        allowedHeaders: ["Content-Type", "Authorization"],
+        preflightContinue: false,
     }
 ))
 
