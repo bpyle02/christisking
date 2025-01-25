@@ -29,17 +29,19 @@ let emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/; // regex for e
 let passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/; // regex for password
 let PORT = 3173;
 
-const corsOptions = {
-    origin: 'https://christisking-7i4b.vercel.app/', // or use '*' to allow any origin, but this is less secure
-    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-}
-
 server.use(express.json());
-server.use("*", cors(corsOptions))
+server.use("*", cors({
+    origin: [process.env.VITE_SERVER_DOMAIN],
+    methods: ["POST", "GET"],
+    credentials: true,
+    optionsSuccessStatus: 200
+}))
 
 mongoose.connect((process.env.DB_LOCATION), {
     autoIndex: true
 })
+
+console.log(process.env.VITE_SERVER_DOMAIN)
 
 const verifyJWT = (req, res, next) => {
 
