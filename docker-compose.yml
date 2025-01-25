@@ -11,8 +11,6 @@ services:
     tty: true
     depends_on:
       - server
-    networks:
-      - mern-network
 
   server:
     build: ./server
@@ -24,8 +22,6 @@ services:
     tty: true
     depends_on:
       - database
-    networks:
-      - mern-network
 
   database:
     image: mongo
@@ -35,9 +31,3 @@ services:
       - "27017:27017"
     volumes:
       - /mnt/nas/mongo:/data/db
-    networks:
-      - mern-network
-
-networks:
-  mern-network:
-    driver: bridge
