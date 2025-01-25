@@ -31,7 +31,7 @@ let PORT = 3173;
 
 server.use(express.json());
 server.use("*", cors({
-    origin: [process.env.VITE_SERVER_DOMAIN],
+    origin: ["*"],
     methods: ["POST", "GET"],
     credentials: true,
     optionsSuccessStatus: 200
@@ -40,8 +40,6 @@ server.use("*", cors({
 mongoose.connect((process.env.DB_LOCATION), {
     autoIndex: true
 })
-
-console.log(process.env.VITE_SERVER_DOMAIN)
 
 const verifyJWT = (req, res, next) => {
 
