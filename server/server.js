@@ -30,7 +30,13 @@ let passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/; // regex for pass
 let PORT = 3000;
 
 server.use(express.json());
-server.use(cors({ origin: '*' }))
+server.use(cors(
+    {
+        origin: '*',
+        credentials: true,
+        method: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"]
+    }
+))
 
 mongoose.connect((process.env.DB_LOCATION), {
     autoIndex: true
