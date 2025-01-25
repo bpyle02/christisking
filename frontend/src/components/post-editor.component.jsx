@@ -51,7 +51,7 @@ const PostEditor = () => {
 
             console.log(formData)
     
-            axios.post(import.meta.env.VITE_SERVER_DOMAIN + '/upload-image', formData, {
+            axios.post(import.meta.env.VITE_SERVER_DOMAIN + '/api/upload-image', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                     'Authorization': `Bearer ${access_token}`
@@ -143,7 +143,7 @@ const PostEditor = () => {
                     title, bannerUrl, des, content, tags, draft: true
                 }
 
-                axios.post(import.meta.env.VITE_SERVER_DOMAIN + "/create-post", { ...postObj, id: post_id }, {
+                axios.post(import.meta.env.VITE_SERVER_DOMAIN + "/api/create-post", { ...postObj, id: post_id }, {
                     headers: {
                         'Authorization': `Bearer ${access_token}`,
                         'username': username

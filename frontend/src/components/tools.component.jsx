@@ -18,7 +18,7 @@ const uploadImageByFile = (file) => {
     const formData = new FormData();
     formData.append('image', file); // 'image' should match the field name expected by your server
 
-    return axios.post(import.meta.env.VITE_SERVER_DOMAIN + '/upload-image', formData, {
+    return axios.post(import.meta.env.VITE_SERVER_DOMAIN + '/api/upload-image', formData, {
         headers: {
             'Content-Type': 'multipart/form-data',
             'Authorization': `Bearer ${access_token}` // If authentication is required

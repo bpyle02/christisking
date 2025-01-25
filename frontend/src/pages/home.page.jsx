@@ -28,14 +28,14 @@ const HomePage = () => {
 
     const fetchLatestPosts = ({ page = 1 }) => {
         axios
-            .post(import.meta.env.VITE_SERVER_DOMAIN + "/latest-posts", { page })
+            .post(import.meta.env.VITE_SERVER_DOMAIN + "/api/latest-posts", { page })
             .then( async ({ data }) => {
 
                 let formatedData = await filterPaginationData({
                     state: posts,
                     data: data.posts,
                     page,
-                    countRoute: "/all-latest-posts-count"
+                    countRoute: "/api/all-latest-posts-count"
                 })
 
                 setPost(formatedData);
@@ -47,14 +47,14 @@ const HomePage = () => {
 
     const fetchPostsByCategory = ({ page = 1 }) => {
         axios
-            .post(import.meta.env.VITE_SERVER_DOMAIN + "/search-posts", { tag: pageState, page })
+            .post(import.meta.env.VITE_SERVER_DOMAIN + "/api/search-posts", { tag: pageState, page })
             .then( async ({ data }) => {
                 
                 let formatedData = await filterPaginationData({
                     state: posts,
                     data: data.posts,
                     page,
-                    countRoute: "/search-posts-count",
+                    countRoute: "/api/search-posts-count",
                     data_to_send: { tag: pageState }
                 })
 
@@ -67,7 +67,7 @@ const HomePage = () => {
 
     const fetchTrendingPosts = () => {
         axios
-            .get(import.meta.env.VITE_SERVER_DOMAIN + "/trending-posts")
+            .get(import.meta.env.VITE_SERVER_DOMAIN + "/api/trending-posts")
             .then(({ data }) => {
                 setTrendingPost(data.posts);
             })

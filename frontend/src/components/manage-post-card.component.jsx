@@ -101,7 +101,7 @@ const deletePost = (post, access_token, target) => {
 
     target.setAttribute("disabled", true);
 
-    axios.post(import.meta.env.VITE_SERVER_DOMAIN + "/delete-post", { post_id }, {
+    axios.post(import.meta.env.VITE_SERVER_DOMAIN + "/api/delete-post", { post_id }, {
         headers: {
             'Authorization': `Bearer ${access_token}`
         }

@@ -23,7 +23,7 @@ const ManagePosts = () => {
 
     const getPosts = ({ page, draft, deletedDocCount = 0 }) => {
 
-        axios.post(import.meta.env.VITE_SERVER_DOMAIN + "/user-written-posts", {
+        axios.post(import.meta.env.VITE_SERVER_DOMAIN + "/api/user-written-posts", {
             page, draft, query, deletedDocCount 
         }, {
             headers: {
@@ -37,7 +37,7 @@ const ManagePosts = () => {
                 data: data.posts, 
                 page,
                 user: access_token,
-                countRoute: "/user-written-posts-count",
+                countRoute: "/api/user-written-posts-count",
                 data_to_send: { draft, query }
             })
 
