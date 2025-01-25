@@ -29,8 +29,13 @@ let emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/; // regex for e
 let passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/; // regex for password
 let PORT = 3173;
 
+const corsOptions = {
+    origin: 'http://10.0.0.16:5173', // or use '*' to allow any origin, but this is less secure
+    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+}
+  
 server.use(express.json());
-server.use(cors())
+server.use("*", cors(corsOptions))
 
 mongoose.connect("mongodb://db-mongo/christisking", {
     autoIndex: true
