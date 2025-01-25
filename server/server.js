@@ -27,12 +27,17 @@ admin.initializeApp({
 
 let emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/; // regex for email
 let passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/; // regex for password
-let PORT = 3000;
-  
-server.use(express.json());
-server.use()
+let PORT = 3173;
 
-mongoose.connect(process.env.DB_LOCATION, {
+const corsOptions = {
+    origin: 'https://christisking-7i4b.vercel.app/', // or use '*' to allow any origin, but this is less secure
+    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+}
+
+server.use(express.json());
+server.use("*", cors(corsOptions))
+
+mongoose.connect((process.env.DB_LOCATION), {
     autoIndex: true
 })
 
