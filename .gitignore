@@ -1,4 +1,11 @@
-# Logs
+server/node_modules/*
+server/.env
+server/requests.rest
+server/firebase_private_key.json
+
+frontend/node_modules/*
+frontend/.env
+
 logs
 *.log
 npm-debug.log*
@@ -12,7 +19,6 @@ dist
 dist-ssr
 *.local
 
-# Editor directories and files
 .vscode/*
 !.vscode/extensions.json
 .idea

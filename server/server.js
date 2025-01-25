@@ -11,8 +11,6 @@ import { getAuth } from "firebase-admin/auth";
 import multer from "multer";
 import { GridFSBucket } from 'mongodb';
 import path from 'path';
-
-// schema below
 import User from './Schema/User.js';
 import Post from './Schema/Post.js';
 import Uploads from './Schema/Uploads.js';

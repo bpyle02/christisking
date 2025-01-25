@@ -1,7 +1,0 @@
-node_modules/*
-
-.env
-
-requests.rest
-
-firebase_private_key.json
