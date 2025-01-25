@@ -1127,6 +1127,6 @@ server.post("/delete-post", verifyJWT, (req, res) => {
 })
 
 
-server.listen(PORT, () => {
+server.listen(PORT, '0.0.0.0', () => {
     console.log('listening on port -> ' + PORT);
 })
