@@ -31,9 +31,7 @@ let PORT = 3173;
 
 server.use(express.json());
 server.use("*", cors({
-    origin: ["*"],
-    methods: ["POST", "GET"],
-    credentials: true,
+    origin: "*",
     optionsSuccessStatus: 200
 }))
 
