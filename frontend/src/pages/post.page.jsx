@@ -34,13 +34,13 @@ const PostPage = () => {
     let { title, content, bannerUrl, author: { personal_info: { fullname, username: author_username , profile_img } }, publishedAt } = post;
 
     const fetchPost = () => {
-        axios.post(import.meta.env.VITE_SERVER_DOMAIN + "/api/get-post", { post_id })
+        axios.post(import.meta.env.VITE_SERVER_DOMAIN + "/get-post", { post_id })
         .then(async ({ data: { post } }) => {
 
             post.comments = await fetchComments({ post_id: post._id, setParentCommentCountFun: setTotalParentCommentsLoaded })
             setPost(post)
 
-            axios.post(import.meta.env.VITE_SERVER_DOMAIN + "/api/search-posts", { tag: post.tags[0], limit: 6, eliminate_post: post_id })
+            axios.post(import.meta.env.VITE_SERVER_DOMAIN + "/search-posts", { tag: post.tags[0], limit: 6, eliminate_post: post_id })
             .then(({ data }) => {
 
                 setSimilrPosts(data.posts);

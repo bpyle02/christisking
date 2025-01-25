@@ -74,7 +74,7 @@ const CommentCard = ({ index, leftVal, commentData }) => {
 
             hideReplies();
 
-            axios.post(import.meta.env.VITE_SERVER_DOMAIN + "/api/get-replies", { _id: commentsArr[currentIndex]._id , skip  })
+            axios.post(import.meta.env.VITE_SERVER_DOMAIN + "/get-replies", { _id: commentsArr[currentIndex]._id , skip  })
             .then(({ data: { replies } }) => {
 
                 commentsArr[currentIndex].isReplyLoaded = true;
@@ -102,7 +102,7 @@ const CommentCard = ({ index, leftVal, commentData }) => {
 
         e.target.setAttribute("disabled", true);
 
-        axios.post(import.meta.env.VITE_SERVER_DOMAIN + "/api/delete-comment", { _id }, {
+        axios.post(import.meta.env.VITE_SERVER_DOMAIN + "/delete-comment", { _id }, {
             headers: {
                 'Authorization': `Bearer ${access_token}`
             }

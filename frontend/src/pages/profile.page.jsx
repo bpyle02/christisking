@@ -41,7 +41,7 @@ const ProfilePage = () => {
     let { userAuth: { username } } = useContext(UserContext)
 
     const fetchUserProfile = () => {
-        axios.post(import.meta.env.VITE_SERVER_DOMAIN + "/api/get-profile", { username: profileId })
+        axios.post(import.meta.env.VITE_SERVER_DOMAIN + "/get-profile", { username: profileId })
         .then(({ data: user }) => {
             if(user != null){
                 setProfile(user);
@@ -60,7 +60,7 @@ const ProfilePage = () => {
 
         user_id = user_id == undefined ? posts.user_id : user_id;
 
-        axios.post(import.meta.env.VITE_SERVER_DOMAIN + "/api/search-posts", {
+        axios.post(import.meta.env.VITE_SERVER_DOMAIN + "/search-posts", {
             author: user_id,
             page
         })
@@ -70,7 +70,7 @@ const ProfilePage = () => {
                 state: posts,
                 data: data.posts,
                 page,
-                countRoute: "/api/search-posts-count",
+                countRoute: "/search-posts-count",
                 data_to_send: { author: user_id }
             })
 

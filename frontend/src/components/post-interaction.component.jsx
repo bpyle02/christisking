@@ -15,7 +15,7 @@ const PostInteraction = () => {
 
         if( access_token ){
             // make request to server to get like information
-            axios.post(import.meta.env.VITE_SERVER_DOMAIN + "/api/isliked-by-user", { _id }, {
+            axios.post(import.meta.env.VITE_SERVER_DOMAIN + "/isliked-by-user", { _id }, {
                 headers: {
                     'Authorization': `Bearer ${access_token}`
                 }
@@ -40,7 +40,7 @@ const PostInteraction = () => {
 
             setPost({ ...post, activity: { ...activity, total_likes } })
 
-            axios.post(import.meta.env.VITE_SERVER_DOMAIN + "/api/like-post", { _id, islikedByUser }, {
+            axios.post(import.meta.env.VITE_SERVER_DOMAIN + "/like-post", { _id, islikedByUser }, {
                 headers: { 
                     'Authorization': `Bearer ${access_token}`
                 }

@@ -27,17 +27,12 @@ admin.initializeApp({
 
 let emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/; // regex for email
 let passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/; // regex for password
-let PORT = 3173;
-
-const corsOptions = {
-    origin: 'http://10.0.0.16:5173', // or use '*' to allow any origin, but this is less secure
-    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-}
+let PORT = 3000;
   
 server.use(express.json());
-server.use("*", cors(corsOptions))
+server.use()
 
-mongoose.connect("mongodb://db-mongo/christisking", {
+mongoose.connect(process.env.DB_LOCATION, {
     autoIndex: true
 })
 
@@ -169,7 +164,7 @@ server.post("/signin", (req, res) => {
 
 })
 
-server.post("/api/google-auth", async (req, res) => {
+server.post("/google-auth", async (req, res) => {
 
     let { access_token } = req.body;
 
@@ -220,7 +215,7 @@ server.post("/api/google-auth", async (req, res) => {
 
 })
 
-server.post("/api/facebook-auth", async (req, res) => {
+server.post("/facebook-auth", async (req, res) => {
 
     let { access_token } = req.body;
 
@@ -271,7 +266,7 @@ server.post("/api/facebook-auth", async (req, res) => {
 
 })
 
-server.post('/api/upload-image', upload.single('bannerUrl'), (req, res) => {
+server.post('/upload-image', upload.single('bannerUrl'), (req, res) => {
     try {
         if (req.file) {
             const db = mongoose.connection.db;
@@ -292,14 +287,14 @@ server.post('/api/upload-image', upload.single('bannerUrl'), (req, res) => {
                 const newUpload = new Uploads({
                     filename: filename,
                     contentType: req.file.mimetype,
-                    path: `/api/uploads/${filename}`,
+                    path: `/uploads/${filename}`,
                     size: req.file.size,
                     metadata: {}
                 });
 
                 await newUpload.save();
 
-                const imageUrl = `/api/uploads/${filename}`;
+                const imageUrl = `/uploads/${filename}`;
                 res.status(200).json({ filename: filename, bannerUrl: imageUrl });
             });
         } else {
@@ -311,7 +306,7 @@ server.post('/api/upload-image', upload.single('bannerUrl'), (req, res) => {
     }
 });
 
-server.get('/api/uploads/:filename', async (req, res) => {
+server.get('/uploads/:filename', async (req, res) => {
     try {
         const file = await Uploads.findOne({ filename: req.params.filename });
         
@@ -340,7 +335,7 @@ server.get('/api/uploads/:filename', async (req, res) => {
     }
 });
 
-server.post('/api/create-post', async (req, res) => {
+server.post('/create-post', async (req, res) => {
     try {
         let username = req.headers['username'];
 
@@ -383,7 +378,7 @@ server.post('/api/create-post', async (req, res) => {
     }
 });
 
-server.post("/api/change-password", verifyJWT, (req, res) => {
+server.post("/change-password", verifyJWT, (req, res) => {
 
     let { currentPassword, newPassword } = req.body; 
 
@@ -428,7 +423,7 @@ server.post("/api/change-password", verifyJWT, (req, res) => {
 
 })
 
-server.post('/api/latest-posts', (req, res) => {
+server.post('/latest-posts', (req, res) => {
 
     let { page } = req.body;
 
@@ -449,7 +444,7 @@ server.post('/api/latest-posts', (req, res) => {
 
 })
 
-server.post("/api/all-latest-posts-count", (req, res) => {
+server.post("/all-latest-posts-count", (req, res) => {
 
     Post.countDocuments({ draft: false })
     .then(count => {
@@ -462,7 +457,7 @@ server.post("/api/all-latest-posts-count", (req, res) => {
 
 })
 
-server.get("/api/trending-posts", (req, res) => {
+server.get("/trending-posts", (req, res) => {
 
     Post.find({ draft: false })
     .populate("author", "personal_info.profile_img personal_info.username personal_info.fullname -_id")
@@ -478,7 +473,7 @@ server.get("/api/trending-posts", (req, res) => {
 
 })
 
-server.post("/api/search-posts", (req, res) => {
+server.post("/search-posts", (req, res) => {
 
     let { tag, query, author, page, limit, eliminate_post } = req.body;
 
@@ -509,7 +504,7 @@ server.post("/api/search-posts", (req, res) => {
 
 })
 
-server.post("/api/search-posts-count", (req, res) => {
+server.post("/search-posts-count", (req, res) => {
 
     let { tag, author, query } = req.body;
 
@@ -534,7 +529,7 @@ server.post("/api/search-posts-count", (req, res) => {
 
 })
 
-server.post("/api/search-users", (req, res) => {
+server.post("/search-users", (req, res) => {
 
     let { query } = req.body;
 
@@ -550,7 +545,7 @@ server.post("/api/search-users", (req, res) => {
 
 })
 
-server.post("/api/get-profile", (req, res) => {
+server.post("/get-profile", (req, res) => {
 
     let { username } = req.body;
 
@@ -566,7 +561,7 @@ server.post("/api/get-profile", (req, res) => {
 
 })
 
-server.post("/api/update-profile-img", verifyJWT, (req, res) => {
+server.post("/update-profile-img", verifyJWT, (req, res) => {
 
     let { url } = req.body;
 
@@ -580,7 +575,7 @@ server.post("/api/update-profile-img", verifyJWT, (req, res) => {
 
 })
 
-server.post("/api/update-profile", verifyJWT, (req, res) => {
+server.post("/update-profile", verifyJWT, (req, res) => {
 
     let { username, bio, social_links } = req.body;
 
@@ -634,7 +629,7 @@ server.post("/api/update-profile", verifyJWT, (req, res) => {
 
 })
 
-server.post('/api/create-post', verifyJWT, (req, res) => {
+server.post('/create-post', verifyJWT, (req, res) => {
 
     let authorId = req.user;
     let isAdmin = req.admin;
@@ -710,7 +705,7 @@ server.post('/api/create-post', verifyJWT, (req, res) => {
 
 })
 
-server.post("/api/get-post", (req, res) => {
+server.post("/get-post", (req, res) => {
 
     let { post_id, draft, mode } = req.body;
 
@@ -741,7 +736,7 @@ server.post("/api/get-post", (req, res) => {
 
 })
 
-server.post("/api/like-post", verifyJWT, (req, res) => {
+server.post("/like-post", verifyJWT, (req, res) => {
 
     let user_id = req.user;
 
@@ -779,7 +774,7 @@ server.post("/api/like-post", verifyJWT, (req, res) => {
 
 })
 
-server.post("/api/isliked-by-user", verifyJWT, (req, res) => {
+server.post("/isliked-by-user", verifyJWT, (req, res) => {
     
     let user_id = req.user;
 
@@ -795,7 +790,7 @@ server.post("/api/isliked-by-user", verifyJWT, (req, res) => {
 
 }) 
 
-server.post("/api/add-comment", verifyJWT, (req, res) => {
+server.post("/add-comment", verifyJWT, (req, res) => {
 
     let user_id = req.user;
 
@@ -855,7 +850,7 @@ server.post("/api/add-comment", verifyJWT, (req, res) => {
 
 }) 
 
-server.post("/api/get-post-comments", (req, res) => {
+server.post("/get-post-comments", (req, res) => {
 
     let { post_id, skip } = req.body;
 
@@ -879,7 +874,7 @@ server.post("/api/get-post-comments", (req, res) => {
 
 })
 
-server.post("/api/get-replies", (req, res) => {
+server.post("/get-replies", (req, res) => {
 
     let { _id, skip } = req.body;
 
@@ -939,7 +934,7 @@ const deleteComments = ( _id ) => {
     })
 }
 
-server.post("/api/delete-comment", verifyJWT, (req, res) => {
+server.post("/delete-comment", verifyJWT, (req, res) => {
 
     let user_id = req.user;
 
@@ -962,7 +957,7 @@ server.post("/api/delete-comment", verifyJWT, (req, res) => {
 
 })
 
-server.get("/api/new-notification", verifyJWT, (req, res) => {
+server.get("/new-notification", verifyJWT, (req, res) => {
 
     let user_id = req.user;
 
@@ -981,7 +976,7 @@ server.get("/api/new-notification", verifyJWT, (req, res) => {
 
 })
 
-server.post("/api/notifications", verifyJWT, (req, res) => {
+server.post("/notifications", verifyJWT, (req, res) => {
     let user_id = req.user;
 
     let { page, filter, deletedDocCount } = req.body;
@@ -1027,7 +1022,7 @@ server.post("/api/notifications", verifyJWT, (req, res) => {
 
 })
 
-server.post("/api/all-notifications-count", verifyJWT, (req, res) => {
+server.post("/all-notifications-count", verifyJWT, (req, res) => {
 
     let user_id = req.user;
 
@@ -1049,7 +1044,7 @@ server.post("/api/all-notifications-count", verifyJWT, (req, res) => {
 
 })
 
-server.post("/api/user-written-posts", verifyJWT, (req, res) => {
+server.post("/user-written-posts", verifyJWT, (req, res) => {
 
     let user_id = req.user;
 
@@ -1076,7 +1071,7 @@ server.post("/api/user-written-posts", verifyJWT, (req, res) => {
 
 })
 
-server.post("/api/user-written-posts-count", verifyJWT, (req, res) => {
+server.post("/user-written-posts-count", verifyJWT, (req, res) => {
 
     let user_id = req.user;
 
@@ -1093,7 +1088,7 @@ server.post("/api/user-written-posts-count", verifyJWT, (req, res) => {
 
 })
 
-server.post("/api/delete-post", verifyJWT, (req, res) => {
+server.post("/delete-post", verifyJWT, (req, res) => {
 
     let user_id = req.user;
     let isAdmin = req.admin;

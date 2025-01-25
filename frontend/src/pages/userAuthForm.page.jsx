@@ -75,7 +75,7 @@ const UserAuthForm = ({ type }) => {
 
         authWithGoogle().then(user => {
             
-            let serverRoute = "/api/google-auth";
+            let serverRoute = "/google-auth";
 
             let formData = {
                 access_token: user.accessToken
@@ -97,7 +97,7 @@ const UserAuthForm = ({ type }) => {
 
         authWithFacebook().then(user => {
             
-            let serverRoute = "/api/facebook-auth";
+            let serverRoute = "/facebook-auth";
 
             let formData = {
                 access_token: user.accessToken
