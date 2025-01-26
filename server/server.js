@@ -118,7 +118,9 @@ server.post("/signup", (req, res) => {
 
         let user = new User({
             personal_info: { fullname, email, password: hashed_password, username },
-            admin: isAdmin
+            admin: isAdmin,
+            google_auth: false,
+            facebook_auth: false
         })
 
         user.save().then((u) => {
@@ -187,10 +189,15 @@ server.post("/google-auth", async (req, res) => {
     .then(async (decodedUser) => {
 
         let { email, name, picture } = decodedUser;
+        let isAdmin = false;
+        
+        if (process.env.ADMIN_EMAILS.split(",").includes(email)) {
+            isAdmin = true;
+        }
 
         picture = picture.replace("s96-c", "s384-c");
 
-        let user = await User.findOne({"personal_info.email": email}).select("personal_info.fullname personal_info.username personal_info.profile_img google_auth").then((u) => {
+        let user = await User.findOne({"personal_info.email": email}).select("personal_info.fullname personal_info.username personal_info.profile_img admin google_auth facebook_auth").then((u) => {
             return u || null
         })
         .catch(err => {
@@ -208,7 +215,9 @@ server.post("/google-auth", async (req, res) => {
 
             user = new User({
                 personal_info: { fullname: name, email, username },
-                google_auth: true
+                admin: isAdmin,
+                google_auth: true,
+                facebook_auth: false
             })
 
             await user.save().then((u) => {
@@ -232,14 +241,20 @@ server.post("/google-auth", async (req, res) => {
 server.post("/facebook-auth", async (req, res) => {
 
     let { access_token } = req.body;
-
+    
+    
     getAuth()
     .verifyIdToken(access_token)
     .then(async (decodedUser) => {
+        
+        let { email, name } = decodedUser;
+        let isAdmin = false;
+        
+        if (process.env.ADMIN_EMAILS.split(",").includes(email)) {
+            isAdmin = true;
+        }
 
-        let { email, name, picture } = decodedUser;
-
-        let user = await User.findOne({"personal_info.email": email}).select("personal_info.fullname personal_info.username personal_info.profile_img facebook_auth").then((u) => {
+        let user = await User.findOne({"personal_info.email": email}).select("personal_info.fullname personal_info.username personal_info.profile_img admin google_auth facebook_auth").then((u) => {
             return u || null
         })
         .catch(err => {
@@ -257,6 +272,8 @@ server.post("/facebook-auth", async (req, res) => {
 
             user = new User({
                 personal_info: { fullname: name, email, username },
+                admin: isAdmin,
+                google_auth: false,
                 facebook_auth: true
             })
 
