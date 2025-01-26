@@ -57,6 +57,8 @@ const App = () => {
                 <Routes>
                     <Route path="/editor" element={<Editor />} />
                     <Route path="/editor/:post_id" element={<Editor />} />
+                    <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                    <Route path="/data-deletion" element={<DataDeletion />} />
                     <Route path="/" element={<Navbar />}> 
                         <Route index element={<HomePage />} />
                         <Route path="dashboard" element={<SideNav />} > 
@@ -72,8 +74,6 @@ const App = () => {
                         <Route path="search/:query" element={<SearchPage />} />
                         <Route path="user/:id" element={<ProfilePage />} />
                         <Route path="post/:post_id" element={<PostPage />}/>
-                        <Route path="privacy-policy" element={<PrivacyPolicy />} />
-                        <Route path="data-deletion" element={<DataDeletion />} />
                         <Route path="*" element={<PageNotFound />} /> 
                     </Route>
                 </Routes>

@@ -16,14 +16,11 @@ const HomePage = () => {
     let [ pageState, setPageState ] = useState("home");
 
     let categories = [
-        "programming",
-        "hollywood",
-        "film making",
-        "social media",
-        "cooking",
-        "tech",
-        "finance",
-        "travel",
+        "apologetics",
+        "bible study",
+        "science",
+        "current events",
+        "news"
     ];
 
     const fetchLatestPosts = ({ page = 1 }) => {
