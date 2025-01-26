@@ -92,18 +92,23 @@ const generateUsername = async (email) => {
 server.post("/signup", (req, res) => {
 
     let { fullname, email, password } = req.body;
+    let isAdmin = false;
+
+    if (process.env.ADMIN_EMAILS.split(",").includes(email)) {
+        isAdmin = true;
+    }
 
    // validating the data from frontend
-   if(fullname.length < 3){
+   if (fullname.length < 3){
         return res.status(403).json({ "error": "Fullname must be at least 3 letters long" })
    }
-   if(!email.length){
+   if (!email.length){
         return res.status(403).json({ "error": "Enter Email" })
    }
-   if(!emailRegex.test(email)){
+   if (!emailRegex.test(email)){
         return res.status(403).json({ "error": "Email is invalid" })
    }
-   if(!passwordRegex.test(password)){
+   if (!passwordRegex.test(password)){
         return res.status(403).json({ "error": "Password should be 6 to 20 characters long with a numeric, 1 lowercase and 1 uppercase letters" })
    }
 
@@ -112,7 +117,8 @@ server.post("/signup", (req, res) => {
         let username = await generateUsername(email);
 
         let user = new User({
-            personal_info: { fullname, email, password: hashed_password, username }
+            personal_info: { fullname, email, password: hashed_password, username },
+            admin: isAdmin
         })
 
         user.save().then((u) => {
@@ -144,7 +150,7 @@ server.post("/signin", (req, res) => {
         }
         
 
-        if(!user.google_auth){
+        if(!user.google_auth || !user.facebook_auth){
 
             bcrypt.compare(password, user.personal_info.password, (err, result) => {
 
@@ -161,7 +167,7 @@ server.post("/signin", (req, res) => {
             })
 
         } else {
-            return res.status(403).json({ "error": "Account was created using google. Try logging in with google." })
+            return res.status(403).json({ "error": "Account was created using an oauth provider. Try logging in with with Facebook or Google." })
         }
 
     })
@@ -232,8 +238,6 @@ server.post("/facebook-auth", async (req, res) => {
     .then(async (decodedUser) => {
 
         let { email, name, picture } = decodedUser;
-
-        picture = picture.replace("s96-c", "s384-c");
 
         let user = await User.findOne({"personal_info.email": email}).select("personal_info.fullname personal_info.username personal_info.profile_img facebook_auth").then((u) => {
             return u || null
