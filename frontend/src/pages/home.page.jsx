@@ -188,7 +188,7 @@ const HomePage = () => {
 
                         <div>
                             <h1 className="font-medium text-xl mb-8">
-                                Trending
+                                Trending&nbsp;
                                 <i className="fi fi-rr-arrow-trend-up"></i>
                             </h1>
 
