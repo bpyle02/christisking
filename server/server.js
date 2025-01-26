@@ -214,7 +214,7 @@ server.post("/google-auth", async (req, res) => {
             let username = await generateUsername(email);
 
             user = new User({
-                personal_info: { fullname: name, email, username },
+                personal_info: { fullname: name, email, username, profile_img: picture },
                 admin: isAdmin,
                 google_auth: true,
                 facebook_auth: false
@@ -247,7 +247,7 @@ server.post("/facebook-auth", async (req, res) => {
     .verifyIdToken(access_token)
     .then(async (decodedUser) => {
         
-        let { email, name } = decodedUser;
+        let { email, name, picture } = decodedUser;
         let isAdmin = false;
         
         if (process.env.ADMIN_EMAILS.split(",").includes(email)) {
@@ -271,7 +271,7 @@ server.post("/facebook-auth", async (req, res) => {
             let username = await generateUsername(email);
 
             user = new User({
-                personal_info: { fullname: name, email, username },
+                personal_info: { fullname: name, email, username, profile_img: picture },
                 admin: isAdmin,
                 google_auth: false,
                 facebook_auth: true
