@@ -57,10 +57,10 @@ const App = () => {
                 <Routes>
                     <Route path="/editor" element={<Editor />} />
                     <Route path="/editor/:post_id" element={<Editor />} />
-                    <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-                    <Route path="/data-deletion" element={<DataDeletion />} />
                     <Route path="/" element={<Navbar />}> 
                         <Route index element={<HomePage />} />
+                        <Route path="privacy-policy" element={<PrivacyPolicy />} />
+                        <Route path="data-deletion" element={<DataDeletion />} />
                         <Route path="dashboard" element={<SideNav />} > 
                             <Route path="posts" element={<ManagePosts />} />
                             <Route path="notifications" element={<Notifications />} />
