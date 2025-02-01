@@ -92,6 +92,11 @@ const generateUsername = async (email) => {
 server.post("/signup", (req, res) => {
 
     let { fullname, email, password } = req.body;
+    let isAdmin = false;
+
+    if (process.env.ADMIN_EMAILS.split(",").includes(email)) {
+        isAdmin = true;
+    }
 
    // validating the data from frontend
    if(fullname.length < 3){
@@ -110,9 +115,30 @@ server.post("/signup", (req, res) => {
    bcrypt.hash(password, 10, async (err, hashed_password) => {
 
         let username = await generateUsername(email);
+        let profile_img;
+
+        try {
+            let encodedName = fullname.replace(/\s/g, '+');
+            let profile_img_url = `https://ui-avatars.com/api/?name=${encodedName}&background=random&size=384`;
+            let response = await fetch(profile_img_url);            
+            profile_img = response.url;
+
+        } catch (error) {
+            console.error('Failed to fetch avatar:', error);
+            profile_img = "https://cloud.brandonpyle.com/s/JySYcKTSp8tLfCQ/download/default_profile.png";
+        }
 
         let user = new User({
-            personal_info: { fullname, email, password: hashed_password, username }
+            personal_info: {
+                fullname,
+                email,
+                password: hashed_password,
+                username,
+                profile_img: profile_img
+            },
+            admin: isAdmin,
+            google_auth: false,
+            facebook_auth: false
         })
 
         user.save().then((u) => {
@@ -181,10 +207,15 @@ server.post("/google-auth", async (req, res) => {
     .then(async (decodedUser) => {
 
         let { email, name, picture } = decodedUser;
+        let isAdmin = false;
+        
+        if (process.env.ADMIN_EMAILS.split(",").includes(email)) {
+            isAdmin = true;
+        }
 
         picture = picture.replace("s96-c", "s384-c");
 
-        let user = await User.findOne({"personal_info.email": email}).select("personal_info.fullname personal_info.username personal_info.profile_img google_auth").then((u) => {
+        let user = await User.findOne({"personal_info.email": email}).select("personal_info.fullname personal_info.username personal_info.profile_img admin google_auth facebook_auth").then((u) => {
             return u || null
         })
         .catch(err => {
@@ -201,8 +232,10 @@ server.post("/google-auth", async (req, res) => {
             let username = await generateUsername(email);
 
             user = new User({
-                personal_info: { fullname: name, email, username },
-                google_auth: true
+                personal_info: { fullname: name, email, username, profile_img: picture },
+                admin: isAdmin,
+                google_auth: true,
+                facebook_auth: false
             })
 
             await user.save().then((u) => {
@@ -232,10 +265,13 @@ server.post("/facebook-auth", async (req, res) => {
     .then(async (decodedUser) => {
 
         let { email, name, picture } = decodedUser;
+        let isAdmin = false;
+        
+        if (process.env.ADMIN_EMAILS.split(",").includes(email)) {
+            isAdmin = true;
+        }
 
-        picture = picture.replace("s96-c", "s384-c");
-
-        let user = await User.findOne({"personal_info.email": email}).select("personal_info.fullname personal_info.username personal_info.profile_img facebook_auth").then((u) => {
+        let user = await User.findOne({"personal_info.email": email}).select("personal_info.fullname personal_info.username personal_info.profile_img admin facebook_auth google_auth").then((u) => {
             return u || null
         })
         .catch(err => {
@@ -252,7 +288,9 @@ server.post("/facebook-auth", async (req, res) => {
             let username = await generateUsername(email);
 
             user = new User({
-                personal_info: { fullname: name, email, username },
+                personal_info: { fullname: name, email, username, profile_img: picture },
+                admin: isAdmin,
+                google_auth: false,
                 facebook_auth: true
             })
 
