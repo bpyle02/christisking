@@ -180,12 +180,12 @@ const UserAuthForm = ({ type }) => {
                         <p className="mt-6 text-dark-grey text-xl text-center">
                         Don't have an account ?
                         <Link to="/signup" className="underline text-black text-xl ml-1" >
-                            Join us today
+                            Sign up here.
                         </Link>  
                         </p>
                         :
                         <p className="mt-6 text-dark-grey text-xl text-center">
-                        Already a member ?
+                        Already hav an accouont?
                         <Link to="/signin" className="underline text-black text-xl ml-1" >
                             Sign in here.
                         </Link>  
