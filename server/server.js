@@ -382,49 +382,6 @@ server.get('/uploads/:filename', async (req, res) => {
     }
 });
 
-server.post('/create-post', async (req, res) => {
-    try {
-        let username = req.headers['username'];
-
-        if (!username) {
-            return res.status(401).json({ error: 'Username is required to create a post' });
-        }
-
-        const { title, bannerUrl, des, content, tags, draft, id } = req.body;
-
-        if (!title || !bannerUrl || !des || !content || !tags) {
-            return res.status(400).json({ error: 'Missing required fields' });
-        }
-
-        // Find user by username
-        const user = await User.findOne({ "personal_info.username": username });
-        if (!user) {
-            return res.status(404).json({ error: 'User not found' });
-        }
-
-        // Create the post
-        const post = new Post({
-            post_id: id || new mongoose.Types.ObjectId().toString(),
-            title,
-            bannerUrl,
-            des,
-            content,
-            tags,
-            author: user,
-            draft: draft || false
-        });
-
-        // Save the post to the database
-        await post.save();
-
-        res.status(201).json({ message: 'Post created successfully', postId: post._id });
-
-    } catch (error) {
-        console.error('Error creating post:', error);
-        res.status(500).json({ error: 'An error occurred while creating the post' });
-    }
-});
-
 server.post("/change-password", verifyJWT, (req, res) => {
 
     let { currentPassword, newPassword } = req.body; 

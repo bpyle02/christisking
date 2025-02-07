@@ -98,7 +98,7 @@ const PostEditor = () => {
 
     const handlePublishEvent = () => {
         
-        if(!bannerUrl.length){
+        if(!bannerUrl){
             return toast.error("Upload a post bannerUrl to publish it")
         }
 
