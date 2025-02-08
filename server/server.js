@@ -39,16 +39,13 @@ const options = {
 app.use(express.json());
 app.use(cors(
     {
-//        origin: ['http://10.0.0.16:3173', 'http://10.0.0.16:5173', 'https://10.0.0.16:3173', 'https://christisking.com', 'https://christisking.com', 'localhost:3173', 'localhost:5173', 'localhost', 'http://10.0.0.16', 'https://10.0.0.16'],
-	origin: '*',
+	    origin: ['http:10.0.0.16:5173', 'https://10.0.0.16:3173', 'https://christisking.info'],
         credentials: true,
         methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
         allowedHeaders: ["Content-Type", "Authorization", 'username'],
         preflightContinue: false,
     }
 ))
-
-// app.options('*', cors());
 
 mongoose.connect((process.env.DB_LOCATION), {
     autoIndex: true
