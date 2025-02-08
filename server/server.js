@@ -39,7 +39,7 @@ let PORT = 3173;
 app.use(express.json());
 app.use(cors(
     {
-//        origin: ['http://10.0.0.16:3173', 'http://10.0.0.16:5173', 'https://10.0.0.16:3173', 'https://christisking.com', 'https://christisking.com/api', 'localhost:3173', 'localhost:5173', 'localhost', 'http://10.0.0.16', 'https://10.0.0.16'],
+//        origin: ['http://10.0.0.16:3173', 'http://10.0.0.16:5173', 'https://10.0.0.16:3173', 'https://christisking.com', 'https://christisking.com', 'localhost:3173', 'localhost:5173', 'localhost', 'http://10.0.0.16', 'https://10.0.0.16'],
 	origin: '*',
         credentials: true,
         methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
@@ -99,7 +99,7 @@ const generateUsername = async (email) => {
 
 }
 
-app.post("/api/signup", (req, res) => {
+app.post("/signup", (req, res) => {
 
     let { fullname, email, password } = req.body;
     let isAdmin = false;
@@ -129,7 +129,7 @@ app.post("/api/signup", (req, res) => {
 
         try {
             let encodedName = fullname.replace(/\s/g, '+');
-            let profile_img_url = `https://ui-avatars.com/api/?name=${encodedName}&background=random&size=384`;
+            let profile_img_url = `https://ui-avatars.com/?name=${encodedName}&background=random&size=384`;
             let response = await fetch(profile_img_url);            
             profile_img = response.url;
 
@@ -169,7 +169,7 @@ app.post("/api/signup", (req, res) => {
 
 })
 
-app.post("/api/signin", (req, res) => {
+app.post("/signin", (req, res) => {
 
     let { email, password } = req.body;
 
@@ -208,7 +208,7 @@ app.post("/api/signin", (req, res) => {
 
 })
 
-app.post("/api/google-auth", async (req, res) => {
+app.post("/google-auth", async (req, res) => {
 
     let { access_token } = req.body;
 
@@ -266,7 +266,7 @@ app.post("/api/google-auth", async (req, res) => {
 
 })
 
-app.post("/api/facebook-auth", async (req, res) => {
+app.post("/facebook-auth", async (req, res) => {
 
     let { access_token } = req.body;
     
@@ -323,7 +323,7 @@ app.post("/api/facebook-auth", async (req, res) => {
 
 })
 
-app.post('/api/upload-image', upload.single('bannerUrl'), (req, res) => {
+app.post('/upload-image', upload.single('bannerUrl'), (req, res) => {
     try {
         if (req.file) {
             const db = mongoose.connection.db;
@@ -363,7 +363,7 @@ app.post('/api/upload-image', upload.single('bannerUrl'), (req, res) => {
     }
 });
 
-app.get('/api/uploads/:filename', async (req, res) => {
+app.get('/uploads/:filename', async (req, res) => {
     try {
         const file = await Uploads.findOne({ filename: req.params.filename });
         
@@ -392,7 +392,7 @@ app.get('/api/uploads/:filename', async (req, res) => {
     }
 });
 
-app.post("/api/change-password", verifyJWT, (req, res) => {
+app.post("/change-password", verifyJWT, (req, res) => {
 
     let { currentPassword, newPassword } = req.body; 
 
@@ -437,7 +437,7 @@ app.post("/api/change-password", verifyJWT, (req, res) => {
 
 })
 
-app.post("/api/latest-posts", (req, res) => {
+app.post("/latest-posts", (req, res) => {
 
     let { page } = req.body;
 
@@ -458,7 +458,7 @@ app.post("/api/latest-posts", (req, res) => {
 
 })
 
-app.post("/api/all-latest-posts-count", (req, res) => {
+app.post("/all-latest-posts-count", (req, res) => {
 
     Post.countDocuments({ draft: false })
     .then(count => {
@@ -471,7 +471,7 @@ app.post("/api/all-latest-posts-count", (req, res) => {
 
 })
 
-app.get("/api/trending-posts", (req, res) => {
+app.get("/trending-posts", (req, res) => {
 
     Post.find({ draft: false })
     .populate("author", "personal_info.profile_img personal_info.username personal_info.fullname -_id")
@@ -487,7 +487,7 @@ app.get("/api/trending-posts", (req, res) => {
 
 })
 
-app.post("/api/search-posts", (req, res) => {
+app.post("/search-posts", (req, res) => {
 
     let { tag, query, author, page, limit, eliminate_post } = req.body;
 
@@ -518,7 +518,7 @@ app.post("/api/search-posts", (req, res) => {
 
 })
 
-app.post("/api/search-posts-count", (req, res) => {
+app.post("/search-posts-count", (req, res) => {
 
     let { tag, author, query } = req.body;
 
@@ -543,7 +543,7 @@ app.post("/api/search-posts-count", (req, res) => {
 
 })
 
-app.post("/api/search-users", (req, res) => {
+app.post("/search-users", (req, res) => {
 
     let { query } = req.body;
 
@@ -559,7 +559,7 @@ app.post("/api/search-users", (req, res) => {
 
 })
 
-app.post("/api/get-profile", (req, res) => {
+app.post("/get-profile", (req, res) => {
 
     let { username } = req.body;
 
@@ -575,7 +575,7 @@ app.post("/api/get-profile", (req, res) => {
 
 })
 
-app.post("/api/update-profile-img", verifyJWT, (req, res) => {
+app.post("/update-profile-img", verifyJWT, (req, res) => {
 
     let { url } = req.body;
 
@@ -589,7 +589,7 @@ app.post("/api/update-profile-img", verifyJWT, (req, res) => {
 
 })
 
-app.post("/api/update-profile", verifyJWT, (req, res) => {
+app.post("/update-profile", verifyJWT, (req, res) => {
 
     let { username, bio, social_links } = req.body;
 
@@ -643,7 +643,7 @@ app.post("/api/update-profile", verifyJWT, (req, res) => {
 
 })
 
-app.post('/api/create-post', verifyJWT, (req, res) => {
+app.post('/create-post', verifyJWT, (req, res) => {
 
     let authorId = req.user;
     let isAdmin = req.admin;
@@ -719,7 +719,7 @@ app.post('/api/create-post', verifyJWT, (req, res) => {
 
 })
 
-app.post("/api/get-post", (req, res) => {
+app.post("/get-post", (req, res) => {
 
     let { post_id, draft, mode } = req.body;
 
@@ -750,7 +750,7 @@ app.post("/api/get-post", (req, res) => {
 
 })
 
-app.post("/api/like-post", verifyJWT, (req, res) => {
+app.post("/like-post", verifyJWT, (req, res) => {
 
     let user_id = req.user;
 
@@ -788,7 +788,7 @@ app.post("/api/like-post", verifyJWT, (req, res) => {
 
 })
 
-app.post("/api/isliked-by-user", verifyJWT, (req, res) => {
+app.post("/isliked-by-user", verifyJWT, (req, res) => {
     
     let user_id = req.user;
 
@@ -804,7 +804,7 @@ app.post("/api/isliked-by-user", verifyJWT, (req, res) => {
 
 }) 
 
-app.post("/api/add-comment", verifyJWT, (req, res) => {
+app.post("/add-comment", verifyJWT, (req, res) => {
 
     let user_id = req.user;
 
@@ -864,7 +864,7 @@ app.post("/api/add-comment", verifyJWT, (req, res) => {
 
 }) 
 
-app.post("/api/get-post-comments", (req, res) => {
+app.post("/get-post-comments", (req, res) => {
 
     let { post_id, skip } = req.body;
 
@@ -888,7 +888,7 @@ app.post("/api/get-post-comments", (req, res) => {
 
 })
 
-app.post("/api/get-replies", (req, res) => {
+app.post("/get-replies", (req, res) => {
 
     let { _id, skip } = req.body;
 
@@ -948,7 +948,7 @@ const deleteComments = ( _id ) => {
     })
 }
 
-app.post("/api/delete-comment", verifyJWT, (req, res) => {
+app.post("/delete-comment", verifyJWT, (req, res) => {
 
     let user_id = req.user;
 
@@ -971,7 +971,7 @@ app.post("/api/delete-comment", verifyJWT, (req, res) => {
 
 })
 
-app.get("/api/new-notification", verifyJWT, (req, res) => {
+app.get("/new-notification", verifyJWT, (req, res) => {
 
     let user_id = req.user;
 
@@ -990,7 +990,7 @@ app.get("/api/new-notification", verifyJWT, (req, res) => {
 
 })
 
-app.post("/api/notifications", verifyJWT, (req, res) => {
+app.post("/notifications", verifyJWT, (req, res) => {
     let user_id = req.user;
 
     let { page, filter, deletedDocCount } = req.body;
@@ -1036,7 +1036,7 @@ app.post("/api/notifications", verifyJWT, (req, res) => {
 
 })
 
-app.post("/api/all-notifications-count", verifyJWT, (req, res) => {
+app.post("/all-notifications-count", verifyJWT, (req, res) => {
 
     let user_id = req.user;
 
@@ -1058,7 +1058,7 @@ app.post("/api/all-notifications-count", verifyJWT, (req, res) => {
 
 })
 
-app.post("/api/user-written-posts", verifyJWT, (req, res) => {
+app.post("/user-written-posts", verifyJWT, (req, res) => {
 
     let user_id = req.user;
 
@@ -1085,7 +1085,7 @@ app.post("/api/user-written-posts", verifyJWT, (req, res) => {
 
 })
 
-app.post("/api/user-written-posts-count", verifyJWT, (req, res) => {
+app.post("/user-written-posts-count", verifyJWT, (req, res) => {
 
     let user_id = req.user;
 
@@ -1102,7 +1102,7 @@ app.post("/api/user-written-posts-count", verifyJWT, (req, res) => {
 
 })
 
-app.post("/api/delete-post", verifyJWT, (req, res) => {
+app.post("/delete-post", verifyJWT, (req, res) => {
 
     let user_id = req.user;
     let isAdmin = req.admin;
