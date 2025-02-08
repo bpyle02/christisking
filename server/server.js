@@ -16,8 +16,8 @@ import Post from './Schema/Post.js';
 import Uploads from './Schema/Uploads.js';
 import Notification from "./Schema/Notification.js";
 import Comment from "./Schema/Comment.js";
-import { createServer } from 'https';
-import { readFileSync } from 'fs';
+// import { createServer } from 'https';
+// import { readFileSync } from 'fs';
 
 const app = express();
 const storage = multer.memoryStorage();
@@ -31,10 +31,10 @@ let emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/; // regex for e
 let passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/; // regex for password
 let PORT = 3173;
 
-const options = {
-  key: readFileSync('../../ssl/localhost+3-key.pem'),
-  cert: readFileSync('../../ssl/localhost+3.pem')
-};
+// const options = {
+//   key: readFileSync('../../ssl/localhost+3-key.pem'),
+//   cert: readFileSync('../../ssl/localhost+3.pem')
+// };
 
 app.use(express.json());
 app.use(cors(
@@ -48,7 +48,7 @@ app.use(cors(
     }
 ))
 
-app.options('*', cors());
+// app.options('*', cors());
 
 mongoose.connect((process.env.DB_LOCATION), {
     autoIndex: true
@@ -1133,6 +1133,9 @@ app.post("/api/delete-post", verifyJWT, (req, res) => {
 })
 
 
-createServer(options, app).listen(PORT, '0.0.0.0', () => {
+// createServer(options, app).listen(PORT, '0.0.0.0', () => {
+//     console.log('listening on port -> ' + PORT);
+// })
+app.listen(PORT, '0.0.0.0', () => {
     console.log('listening on port -> ' + PORT);
 })
