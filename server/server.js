@@ -16,8 +16,10 @@ import Post from './Schema/Post.js';
 import Uploads from './Schema/Uploads.js';
 import Notification from "./Schema/Notification.js";
 import Comment from "./Schema/Comment.js";
+import { createServer } from 'https';
+import { readFileSync } from 'fs';
 
-const server = express();
+const app = express();
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
@@ -30,22 +32,23 @@ let passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/; // regex for pass
 let PORT = 3173;
 
 const options = {
-    key: fs.readFileSync('path/to/your/key.pem'),
-    cert: fs.readFileSync('path/to/your/cert.pem')
+  key: readFileSync('../../ssl/localhost+3-key.pem'),
+  cert: readFileSync('../../ssl/localhost+3.pem')
 };
-
-const app = https.createServer(options, server);
 
 app.use(express.json());
 app.use(cors(
     {
-        origin: '*',
+//        origin: ['http://10.0.0.16:3173', 'http://10.0.0.16:5173', 'https://10.0.0.16:3173', 'https://christisking.com', 'https://christisking.com/api', 'localhost:3173', 'localhost:5173', 'localhost', 'http://10.0.0.16', 'https://10.0.0.16'],
+	origin: '*',
         credentials: true,
         methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
         allowedHeaders: ["Content-Type", "Authorization", 'username'],
         preflightContinue: false,
     }
 ))
+
+app.options('*', cors());
 
 mongoose.connect((process.env.DB_LOCATION), {
     autoIndex: true
@@ -1130,6 +1133,6 @@ app.post("/api/delete-post", verifyJWT, (req, res) => {
 })
 
 
-app.listen(PORT, '0.0.0.0', () => {
+createServer(options, app).listen(PORT, '0.0.0.0', () => {
     console.log('listening on port -> ' + PORT);
 })
