@@ -323,7 +323,7 @@ app.post("/api/facebook-auth", async (req, res) => {
 
 })
 
-app.post('/upload-image', upload.single('bannerUrl'), (req, res) => {
+app.post('/api/upload-image', upload.single('bannerUrl'), (req, res) => {
     try {
         if (req.file) {
             const db = mongoose.connection.db;
@@ -363,7 +363,7 @@ app.post('/upload-image', upload.single('bannerUrl'), (req, res) => {
     }
 });
 
-app.get('/uploads/:filename', async (req, res) => {
+app.get('/api/uploads/:filename', async (req, res) => {
     try {
         const file = await Uploads.findOne({ filename: req.params.filename });
         
@@ -437,7 +437,7 @@ app.post("/api/change-password", verifyJWT, (req, res) => {
 
 })
 
-app.post('/latest-posts', (req, res) => {
+app.post("/api/latest-posts", (req, res) => {
 
     let { page } = req.body;
 
@@ -643,7 +643,7 @@ app.post("/api/update-profile", verifyJWT, (req, res) => {
 
 })
 
-app.post('/create-post', verifyJWT, (req, res) => {
+app.post('/api/create-post', verifyJWT, (req, res) => {
 
     let authorId = req.user;
     let isAdmin = req.admin;
