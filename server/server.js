@@ -16,8 +16,8 @@ import Post from './Schema/Post.js';
 import Uploads from './Schema/Uploads.js';
 import Notification from "./Schema/Notification.js";
 import Comment from "./Schema/Comment.js";
-import { createServer } from 'https';
-import { readFileSync } from 'fs';
+// import { createServer } from 'https';
+// import { readFileSync } from 'fs';
 
 const app = express();
 const storage = multer.memoryStorage();
@@ -31,15 +31,15 @@ let emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/; // regex for e
 let passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/; // regex for password
 let PORT = 3173;
 
-const options = {
-  key: readFileSync('../../ssl/localhost+3-key.pem'),
-  cert: readFileSync('../../ssl/localhost+3.pem')
-};
+// const options = {
+//   key: readFileSync('../../ssl/localhost+3-key.pem'),
+//   cert: readFileSync('../../ssl/localhost+3.pem')
+// };
 
 app.use(express.json());
 app.use(cors(
     {
-	    origin: ['http:10.0.0.16:5173', 'https://10.0.0.16:3173', 'https://christisking.info'],
+	    origin: ['http:10.0.0.16:5173', 'https://10.0.0.16:5173', 'http://10.0.0.16:3173', 'https://10.0.0.16:3173', 'https://christisking.info/api', 'https://christisking.info'],
         credentials: true,
         methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
         allowedHeaders: ["Content-Type", "Authorization", 'username'],
@@ -1130,9 +1130,9 @@ app.post("/delete-post", verifyJWT, (req, res) => {
 })
 
 
-createServer(options, app).listen(PORT, '0.0.0.0', () => {
-    console.log('listening on port -> ' + PORT);
-})
-// app.listen(PORT, '0.0.0.0', () => {
+// createServer(options, app).listen(PORT, '0.0.0.0', () => {
 //     console.log('listening on port -> ' + PORT);
 // })
+app.listen(PORT, '0.0.0.0', () => {
+    console.log('listening on port -> ' + PORT);
+})
