@@ -1,9 +1,12 @@
 server/node_modules/*
 server/requests.rest
 server/dist
+server/.env
+server/firebase_private_key.json
 
 frontend/node_modules/*
 frontend/dist
+frontend/.env
 
 logs
 *.log
