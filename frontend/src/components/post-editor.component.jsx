@@ -61,11 +61,7 @@ const PostEditor = () => {
                 toast.dismiss(loadingToast);
                 toast.success("Uploaded 👍");
 
-                console.log(response)
-                console.log(response.data)
-                console.log(import.meta.env.VITE_SERVER_DOMAIN + response.data.bannerUrl)
-
-                setPost({ ...post, bannerUrl: import.meta.env.VITE_SERVER_DOMAIN + response.data.bannerUrl }); // Assuming 'bannerUrl' is the field name in the response
+                setPost({ ...post, bannerUrl: response.data.bannerUrl });
             })
             .catch(error => {
                 console.log(error)
