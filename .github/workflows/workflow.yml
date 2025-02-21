@@ -5,7 +5,7 @@ on: push
 jobs:
   super-lint:
     name: Lint code base
-    runs-on: 60e902b36798
+    runs-on: self-hosted
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
