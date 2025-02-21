@@ -6,7 +6,7 @@ import { nanoid } from 'nanoid';
 import jwt from 'jsonwebtoken';
 import cors from 'cors';
 import admin from "firebase-admin";
-import serviceAccountKey from "./etc/secrets/firebase_private_key.json" with { type: "json" }
+import serviceAccountKey from "./firebase_private_key.json" with { type: "json" }
 import { getAuth } from "firebase-admin/auth";
 import multer from "multer";
 import { GridFSBucket } from 'mongodb';
@@ -16,8 +16,6 @@ import Post from './Schema/Post.js';
 import Uploads from './Schema/Uploads.js';
 import Notification from "./Schema/Notification.js";
 import Comment from "./Schema/Comment.js";
-// import { createServer } from 'https';
-// import { readFileSync } from 'fs';
 
 const app = express();
 const storage = multer.memoryStorage();
@@ -30,11 +28,6 @@ admin.initializeApp({
 let emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/; // regex for email
 let passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/; // regex for password
 let PORT = 3173;
-
-// const options = {
-//   key: readFileSync('../../ssl/localhost+3-key.pem'),
-//   cert: readFileSync('../../ssl/localhost+3.pem')
-// };
 
 app.use(express.json());
 app.use(cors(
@@ -1129,10 +1122,6 @@ app.post("/delete-post", verifyJWT, (req, res) => {
 
 })
 
-
-// createServer(options, app).listen(PORT, '0.0.0.0', () => {
-//     console.log('listening on port -> ' + PORT);
-// })
 app.listen(PORT, '0.0.0.0', () => {
     console.log('listening on port -> ' + PORT);
 })
