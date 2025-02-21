@@ -341,7 +341,7 @@ app.post('/upload-image', upload.single('bannerUrl'), (req, res) => {
 
                 await newUpload.save();
 
-                const imageUrl = `http://10.0.0.16:3173/uploads/${filename}`;
+                const imageUrl = `https://api.christisking.info/uploads/${filename}`;
                 res.status(200).json({ filename: filename, bannerUrl: imageUrl });
             });
         } else {
