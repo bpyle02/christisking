@@ -39,7 +39,7 @@ let PORT = 3173;
 app.use(express.json());
 app.use(cors(
     {
-	    origin: ['http:10.0.0.16:5173', 'https://10.0.0.16:5173', 'http://10.0.0.16:3173', 'https://10.0.0.16:3173', 'https://christisking.info/api', 'https://christisking.info'],
+	    origin: ['http://10.0.0.16:5173', 'http://10.0.0.16:3173', 'https://christisking.info'],
         credentials: true,
         methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
         allowedHeaders: ["Content-Type", "Authorization", 'username'],
