@@ -84,4 +84,5 @@ jobs:
       - name: Deploy with Docker Compose
         run: |
           cd /home/brandon/containers/christisking
+          git pull
           docker compose up --build -d
