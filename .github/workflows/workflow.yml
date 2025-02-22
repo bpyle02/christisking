@@ -119,13 +119,8 @@ jobs:
 
       - name: Start server in background
         working-directory: ./server
-        run: npm start
-
-      - name: Wait for server to start
-        run: sleep 5
-
-      - name: Run chaos tests
         run: |
+          npm start &
           curl -f "http://localhost:3173/chaos-test" || exit 1
           curl -f "http://localhost:3173/users" -X POST -H "Content-Type: application/json" -d '{"fullname":"test","email":"test@example.com","password":"Test1234"}' || echo "Expected failure under chaos"
     
