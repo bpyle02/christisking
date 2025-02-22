@@ -13,8 +13,12 @@ const AboutUser = ({ className, bio, social_links, joinedAt }) => {
 
                         let link = social_links[key];
 
+                        if (link == "x") {
+                            link = "twitter"
+                        }
+
                         return link ? <Link to={link} key={key} target="_blank" ><i 
-                        className={"fi " + (key != 'website' ? "fi-brands-twitter" + key : "fi-rr-globe") + " text-2xl hover:text-black "}
+                        className={"fi " + (key != 'website' ? "fi-brands-" + key : "fi-rr-globe") + " text-2xl hover:text-black "}
                         ></i></Link> : " "
 
                     })
