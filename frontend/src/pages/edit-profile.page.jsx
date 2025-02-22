@@ -196,9 +196,10 @@ const EditProfile = () => {
 
                                         let link = social_links[key];
 
-                                        if (link == "x") {
-                                            link = "twitter"
+                                        if (key == "x") {
+                                            key = "twitter"
                                         }
+                                        console.log(key)
 
                                         return <InputBox key={i} name={key} type="text" value={link} placeholder="https://" icon={"fi " + (key != 'website' ? "fi-brands-" + key : "fi-rr-globe")}  />
 
