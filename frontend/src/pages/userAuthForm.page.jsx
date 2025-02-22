@@ -11,13 +11,15 @@ import { UserContext } from "../App";
 import { authWithGoogle } from "../common/firebase";
 import { authWithFacebook } from "../common/firebase";
 
+console.log(import.meta.env.VITE_NODE_SERVER_DOMAIN)
+
 const UserAuthForm = ({ type }) => {
 
     let { userAuth: { access_token }, setUserAuth } = useContext(UserContext)
 
     const userAuthThroughServer = (serverRoute, formData) => {
 
-        axios.post(import.meta.env.VITE_SERVER_DOMAIN + serverRoute, formData)
+        axios.post(import.meta.env.VITE_NODE_SERVER_DOMAIN + serverRoute, formData)
         .then(({ data }) => {
             storeInSession("user", JSON.stringify(data))
             
@@ -33,7 +35,7 @@ const UserAuthForm = ({ type }) => {
 
         e.preventDefault();
 
-        let serverRoute = type == "sign-in" ? "/signin" : "/signup";
+        let serverRoute = type == "sign-in" ? "/signin" : "/users";
 
         let emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/; // regex for email
         let passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/; // regex for password
@@ -179,7 +181,7 @@ const UserAuthForm = ({ type }) => {
                         type == "sign-in" ?
                         <p className="mt-6 text-dark-grey text-xl text-center">
                         Don't have an account ?
-                        <Link to="/signup" className="underline text-black text-xl ml-1" >
+                        <Link to="/users" className="underline text-black text-xl ml-1" >
                             Sign up here.
                         </Link>  
                         </p>

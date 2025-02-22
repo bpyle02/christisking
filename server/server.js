@@ -25,6 +25,9 @@ admin.initializeApp({
     credential: admin.credential.cert(serviceAccountKey)
 })
 
+console.log(process.env.VITE_SERVER_DOMAIN)
+console.log(process.env.NODE_SERVER_DOMAIN)
+
 let emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/; // regex for email
 let passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/; // regex for password
 let PORT = 3173;
@@ -32,7 +35,7 @@ let PORT = 3173;
 app.use(express.json());
 app.use(cors(
     {
-	    origin: ['http://10.0.0.16:5173', 'http://10.0.0.16:3173', 'https://christisking.info'],
+	    origin: [process.env.VITE_SERVER_DOMAIN, process.env.NODE_SERVER_DOMAIN, 'https://christisking.info'],
         credentials: true,
         methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
         allowedHeaders: ["Content-Type", "Authorization", 'username'],
@@ -44,7 +47,7 @@ mongoose.connect((process.env.DB_LOCATION), {
     autoIndex: true
 })
 
-const verifyJWT = (req, res, next) => {
+export const verifyJWT = (req, res, next) => {
 
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(" ")[1];
@@ -65,7 +68,7 @@ const verifyJWT = (req, res, next) => {
 
 }
 
-const formatDatatoSend = (user) => {
+export const formatDatatoSend = (user) => {
 
     const access_token = jwt.sign({ id: user._id, admin: user.admin }, process.env.SECRET_ACCESS_KEY)
 
@@ -78,7 +81,7 @@ const formatDatatoSend = (user) => {
     }
 }
 
-const generateUsername = async (email) => {
+export const generateUsername = async (email) => {
     let username = email.split("@")[0];
 
     let isUsernameNotUnique = await User.exists({ "personal_info.username": username }).then((result) => result)
@@ -89,44 +92,26 @@ const generateUsername = async (email) => {
 
 }
 
-app.post("/signup", (req, res) => {
-
+app.post("/users", async (req, res) => {
     let { fullname, email, password } = req.body;
-    let isAdmin = false;
+    let isAdmin = process.env.ADMIN_EMAILS.split(",").includes(email);
 
-    if (process.env.ADMIN_EMAILS.split(",").includes(email)) {
-        isAdmin = true;
+    if (fullname.length < 3) {
+        return res.status(403).json({ "error": "Fullname must be at least 3 letters long" })
+    }
+    if (!email.length) {
+        return res.status(403).json({ "error": "Enter Email" })
+    }
+    if (!emailRegex.test(email)) {
+        return res.status(403).json({ "error": "Email is invalid" })
+    }
+    if (!passwordRegex.test(password)) {
+        return res.status(403).json({ "error": "Password should be 6 to 20 characters long with a numeric, 1 lowercase and 1 uppercase letters" })
     }
 
-   // validating the data from frontend
-   if (fullname.length < 3){
-        return res.status(403).json({ "error": "Fullname must be at least 3 letters long" })
-   }
-   if (!email.length){
-        return res.status(403).json({ "error": "Enter Email" })
-   }
-   if (!emailRegex.test(email)){
-        return res.status(403).json({ "error": "Email is invalid" })
-   }
-   if (!passwordRegex.test(password)){
-        return res.status(403).json({ "error": "Password should be 6 to 20 characters long with a numeric, 1 lowercase and 1 uppercase letters" })
-   }
-
-   bcrypt.hash(password, 10, async (err, hashed_password) => {
-
+    bcrypt.hash(password, 10, async (err, hashed_password) => {
         let username = await generateUsername(email);
-        let profile_img;
-
-        try {
-            let encodedName = fullname.replace(/\s/g, '+');
-            let profile_img_url = `https://ui-avatars.com/?name=${encodedName}&background=random&size=384`;
-            let response = await fetch(profile_img_url);            
-            profile_img = response.url;
-
-        } catch (error) {
-            console.error('Failed to fetch avatar:', error);
-            profile_img = "https://cloud.brandonpyle.com/s/JySYcKTSp8tLfCQ/download/default_profile.png";
-        }
+        let profile_img = "https://ui-avatars.com/api/?name=" + fullname.replace(" ", "+") + "&background=random&size=384";
 
         let user = new User({
             personal_info: {
@@ -134,30 +119,23 @@ app.post("/signup", (req, res) => {
                 email,
                 password: hashed_password,
                 username,
-                profile_img: profile_img
+                profile_img
             },
             admin: isAdmin,
             google_auth: false,
             facebook_auth: false
-        })
+        });
 
         user.save().then((u) => {
-
-            return res.status(200).json(formatDatatoSend(u))
-
-        })
-        .catch(err => {
-
-            if(err.code == 11000) {
+            res.status(201).json(formatDatatoSend(u));
+        }).catch(err => {
+            if (err.code == 11000) {
                 return res.status(500).json({ "error": "Email already exists" })
             }
-
             return res.status(500).json({ "error": err.message })
-        })
-
-   }) 
-
-})
+        });
+    });
+});
 
 app.post("/signin", (req, res) => {
 
@@ -341,7 +319,7 @@ app.post('/upload-image', upload.single('bannerUrl'), (req, res) => {
 
                 await newUpload.save();
 
-                const imageUrl = `https://api.christisking.info/uploads/${filename}`;
+                const imageUrl = `${process.env.NODE_SERVER_DOMAIN}/uploads/${filename}`;
                 res.status(200).json({ filename: filename, bannerUrl: imageUrl });
             });
         } else {
@@ -1120,8 +1098,25 @@ app.post("/delete-post", verifyJWT, (req, res) => {
         return res.status(500).json({ error: "you don't have permissions to delete the post" })
     }
 
-})
+});
+
+// Delete User
+app.delete("/users/:id", verifyJWT, (req, res) => {
+
+    if (req.user !== req.originalUrl.split('/')[2]) return res.status(403).json({ error: "Forbidden" });
+
+    User.findByIdAndDelete(req.user)
+        .then(deletedUser => {
+            res.status(200).json({ message: "User deleted successfully" });
+        })
+        .catch(err => {
+            console.log(err)
+            res.status(500).json({ error: "Error deleting user" });
+        });
+});
 
 app.listen(PORT, '0.0.0.0', () => {
     console.log('listening on port -> ' + PORT);
 })
+
+export default app;

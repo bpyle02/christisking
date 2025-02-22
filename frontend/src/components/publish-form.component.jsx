@@ -89,7 +89,7 @@ const PublishForm = () => {
 
         console.log(username)
 
-        axios.post(import.meta.env.VITE_SERVER_DOMAIN + "/create-post", { ...postObj, id: post_id }, {
+        axios.post(import.meta.env.VITE_NODE_SERVER_DOMAIN + "/create-post", { ...postObj, id: post_id }, {
             headers: {
                 'Authorization': `Bearer ${access_token}`,
                 'username': username

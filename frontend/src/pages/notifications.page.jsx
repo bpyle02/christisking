@@ -19,7 +19,7 @@ const Notifications = () => {
 
     const fetchNotifications = ({ page, deletedDocCount = 0 }) => {
 
-        axios.post(import.meta.env.VITE_SERVER_DOMAIN + "/notifications", { page, filter, deletedDocCount }, {
+        axios.post(import.meta.env.VITE_NODE_SERVER_DOMAIN + "/notifications", { page, filter, deletedDocCount }, {
             headers: {
                 'Authorization': `Bearer ${access_token}`
             }

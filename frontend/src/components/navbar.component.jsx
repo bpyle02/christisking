@@ -21,7 +21,7 @@ const Navbar = () => {
     useEffect(() => {
 
         if(access_token){
-            axios.get(import.meta.env.VITE_SERVER_DOMAIN + "/new-notification", {
+            axios.get(import.meta.env.VITE_NODE_SERVER_DOMAIN + "/new-notification", {
                 headers: {
                     'Authorization': `Bearer ${access_token}`
                 }
@@ -136,7 +136,7 @@ const Navbar = () => {
                             <Link className="btn-dark py-2" to="/signin">
                                 Sign In
                             </Link>
-                            <Link className="btn-light py-2 hidden md:block" to="/signup">
+                            <Link className="btn-light py-2 hidden md:block" to="/users">
                                 Sign Up
                             </Link>
                         </>

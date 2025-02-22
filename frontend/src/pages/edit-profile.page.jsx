@@ -27,7 +27,7 @@ const EditProfile = () => {
     useEffect(() => {
 
         if(access_token){
-            axios.post(import.meta.env.VITE_SERVER_DOMAIN + "/get-profile", { username: userAuth.username })
+            axios.post(import.meta.env.VITE_NODE_SERVER_DOMAIN + "/get-profile", { username: userAuth.username })
             .then(({ data }) => {
                 setProfile(data);
                 setLoading(false);
@@ -62,7 +62,7 @@ const EditProfile = () => {
             const formData = new FormData();
             formData.append('profile_img', updatedProfileImg); // Assuming 'profile_img' is the field name on the backend
     
-            axios.post(import.meta.env.VITE_SERVER_DOMAIN + "/update-profile-img", formData, {
+            axios.post(import.meta.env.VITE_NODE_SERVER_DOMAIN + "/update-profile-img", formData, {
                 headers: { 
                     'Content-Type': 'multipart/form-data',
                     'Authorization': `Bearer ${access_token}`
@@ -110,7 +110,7 @@ const EditProfile = () => {
         let loadingToast = toast.loading("Updating.....");
         e.target.setAttribute("disabled", true);
 
-        axios.post(import.meta.env.VITE_SERVER_DOMAIN + "/update-profile", {
+        axios.post(import.meta.env.VITE_NODE_SERVER_DOMAIN + "/update-profile", {
             username, bio, 
             social_links: { youtube, facebook, twitter, github, instagram, website }
         }, {

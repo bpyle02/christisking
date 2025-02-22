@@ -23,7 +23,7 @@ const ManagePosts = () => {
 
     const getPosts = ({ page, draft, deletedDocCount = 0 }) => {
 
-        axios.post(import.meta.env.VITE_SERVER_DOMAIN + "/user-written-posts", {
+        axios.post(import.meta.env.VITE_NODE_SERVER_DOMAIN + "/user-written-posts", {
             page, draft, query, deletedDocCount 
         }, {
             headers: {

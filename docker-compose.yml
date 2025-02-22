@@ -1,0 +1,33 @@
+version: "3"
+
+services:
+  frontend:
+    build: ./frontend
+    container_name: christisking-frontend
+    restart: always
+    ports:
+      - "5173:5173"
+    stdin_open: true
+    tty: true
+    depends_on:
+      - server
+
+  server:
+    build: ./server
+    container_name: christisking-server
+    restart: always
+    ports:
+      - "3173:3173"
+    stdin_open: true
+    tty: true
+    depends_on:
+      - database
+
+  database:
+    image: mongo
+    container_name: christisking-db
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - /mnt/nas/mongo:/data/db
