@@ -6,6 +6,11 @@ export default defineConfig({
   plugins: [react()],
   server: {
     host: true,
-    allowedHosts: ['christisking.info', 'christisking-7i4b.vercel.app', 'christisking.vercel.app']
+    // allowedHosts: ['christisking.info']
+  },
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: './setupTests.js'
   }
 })

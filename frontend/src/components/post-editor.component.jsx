@@ -6,7 +6,7 @@ import lightBanner from "../images/post banner light.png"
 import darkBanner from "../images/post banner dark.png";
 import { useContext, useEffect } from "react";
 import { Toaster, toast } from "react-hot-toast";
-import { EditorContext } from "../pages/editor.pages";
+import { EditorContext } from "../pages/editor.page";
 import EditorJS from "@editorjs/editorjs";
 import { tools } from "./tools.component";
 import axios from "axios";
