@@ -128,7 +128,7 @@ jobs:
         run: |
           echo "NODE_SERVER_DOMAIN is: $NODE_SERVER_DOMAIN"
           echo "NODE_SERVER_DOMAIN is: ${NODE_SERVER_DOMAIN}"
-          echo "NODE_SERVER_DOMAIN is: ${secrets.NODE_SERVER_DOMAIN}"
+          echo "NODE_SERVER_DOMAIN is: ${{ secrets.NODE_SERVER_DOMAIN }}"
           curl -f "$NODE_SERVER_DOMAIN" + "/chaos-test" || exit 1
           curl -f "${NODE_SERVER_DOMAIN}/users" -X POST -H "Content-Type: application/json" -d '{"fullname":"test","email":"test@example.com","password":"Test1234"}' || echo "Expected failure under chaos"
     
