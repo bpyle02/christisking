@@ -40,6 +40,29 @@ jobs:
         working-directory: ./server
         run: npm install
 
+      - name: Create Firebase private key file
+        working-directory: ./server
+        env:
+          FIREBASE_PRIVATE_KEY: ${{ secrets.FIREBASE_PRIVATE_KEY }}
+        run: echo "$FIREBASE_PRIVATE_KEY" > firebase_private_key.json
+
+      - name: Create .env file for backend
+        working-directory: ./server
+        env:
+          DB_LOCATION: ${{ secrets.DB_LOCATION }}
+          SECRET_ACCESS_KEY: ${{ secrets.SECRET_ACCESS_KEY }}
+          FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
+          NODE_SERVER_DOMAIN: ${{ secrets.NODE_SERVER_DOMAIN }}
+          VITE_SERVER_DOMAIN: ${{ secrets.VITE_SERVER_DOMAIN }}
+          ADMIN_EMAILS: ${{ secrets.ADMIN_EMAILS }}
+        run: |
+          echo "DB_LOCATION=$DB_LOCATION" > .env
+          echo "SECRET_ACCESS_KEY=$SECRET_ACCESS_KEY" > .env
+          echo "FIREBASE_PROJECT_ID=$FIREBASE_PROJECT_ID" > .env
+          echo "NODE_SERVER_DOMAIN=$NODE_SERVER_DOMAIN" > .env
+          echo "VITE_SERVER_DOMAIN=$VITE_SERVER_DOMAIN" > .env
+          echo "ADMIN_EMAILS=$ADMIN_EMAILS" > .env
+
       - name: Run tests
         working-directory: ./server
         env:
