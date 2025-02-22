@@ -119,10 +119,12 @@ jobs:
 
       - name: Start server in background
         working-directory: ./server
+        run: npm start &
+
+      - name: Run chaos tests
         run: |
-          npm start &
-          curl -f "http://localhost:3173/chaos-test" || exit 1
-          curl -f "http://localhost:3173/users" -X POST -H "Content-Type: application/json" -d '{"fullname":"test","email":"test@example.com","password":"Test1234"}' || echo "Expected failure under chaos"
+          curl -f "http://localhost/chaos-test" || exit 1
+          curl -f "http://localhost/users" -X POST -H "Content-Type: application/json" -d '{"fullname":"test","email":"test@example.com","password":"Test1234"}' || echo "Expected failure under chaos"
     
   deploy:
     runs-on: self-hosted
