@@ -23,7 +23,7 @@ describe('AboutUser Component', () => {
     const props = {
       bio: 'Test bio content',
       social_links: {},
-      joinedAt: '2023-01-01',
+      joinedAt: '1900-01-01',
     };
 
     render(<AboutUser {...props} />, { wrapper: Wrapper });
