@@ -17,7 +17,7 @@ import ManagePosts from "./pages/manage-posts.page";
 import PrivacyPolicy from "./pages/privacy-policy.page";
 import DataDeletion from "./pages/data-deletion.page";
 
-export const UserContext = createContext({})
+export const UserContext = createContext({});
 
 export const ThemeContext = createContext({});
 
