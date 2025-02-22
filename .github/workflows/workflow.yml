@@ -46,6 +46,10 @@ jobs:
           FIREBASE_PRIVATE_KEY: ${{ secrets.FIREBASE_PRIVATE_KEY }}
         run: echo "$FIREBASE_PRIVATE_KEY" > firebase_private_key.json
 
+      - name: Debug firebase_private_key.json contents
+        working-directory: ./server
+        run: cat firebase_private_key.json
+
       - name: Create .env file for backend
         working-directory: ./server
         env:
@@ -62,6 +66,10 @@ jobs:
           echo "NODE_SERVER_DOMAIN=$NODE_SERVER_DOMAIN" >> .env
           echo "VITE_SERVER_DOMAIN=$VITE_SERVER_DOMAIN" >> .env
           echo "ADMIN_EMAILS=$ADMIN_EMAILS" >> .env
+
+      - name: Debug .env contents
+        working-directory: ./server
+        run: cat .env
 
       - name: Run tests
         working-directory: ./server
