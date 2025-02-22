@@ -1,4 +1,4 @@
-name: Testing
+name: Test and Deployment
 
 on:
   push:
@@ -46,10 +46,6 @@ jobs:
           FIREBASE_PRIVATE_KEY: ${{ secrets.FIREBASE_PRIVATE_KEY }}
         run: echo "$FIREBASE_PRIVATE_KEY" > firebase_private_key.json
 
-      - name: Debug firebase_private_key.json contents
-        working-directory: ./server
-        run: cat firebase_private_key.json
-
       - name: Create .env file for backend
         working-directory: ./server
         env:
@@ -59,6 +55,7 @@ jobs:
           NODE_SERVER_DOMAIN: ${{ secrets.NODE_SERVER_DOMAIN }}
           VITE_SERVER_DOMAIN: ${{ secrets.VITE_SERVER_DOMAIN }}
           ADMIN_EMAILS: ${{ secrets.ADMIN_EMAILS }}
+          CHAOS_MONKEY: "true"
         run: |
           echo "DB_LOCATION=$DB_LOCATION" > .env
           echo "SECRET_ACCESS_KEY=$SECRET_ACCESS_KEY" >> .env
@@ -66,14 +63,17 @@ jobs:
           echo "NODE_SERVER_DOMAIN=$NODE_SERVER_DOMAIN" >> .env
           echo "VITE_SERVER_DOMAIN=$VITE_SERVER_DOMAIN" >> .env
           echo "ADMIN_EMAILS=$ADMIN_EMAILS" >> .env
-
-      - name: Debug .env contents
-        working-directory: ./server
-        run: cat .env
+          echo "CHAOS_MONKEY=$CHAOS_MONKEY" >> .env
 
       - name: Run tests
         working-directory: ./server
         run: npm test
+
+      - name: Run chaos tests
+        run: |
+          curl -f http://localhost:3173/chaos-test || exit 1
+          curl -f http://localhost:3173/users -X POST -H "Content-Type: application/json" -d '{"fullname":"test","email":"test@example.com","password":"Test1234"}' || echo "Expected failure under chaos"
+    
   deploy:
     runs-on: self-hosted
     needs: [frontend-tests, backend-tests]
