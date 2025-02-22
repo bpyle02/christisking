@@ -49,7 +49,7 @@ const userSchema = mongoose.Schema({
             type: String,
             default: "",
         },
-        twitter: {
+        x: {
             type: String,
             default: "",
         },

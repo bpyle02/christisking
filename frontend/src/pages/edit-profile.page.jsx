@@ -98,7 +98,7 @@ const EditProfile = () => {
             formData[key] = value;
         }
 
-        let { username, bio, youtube, facebook, twitter, github, instagram, website } = formData;
+        let { username, bio, youtube, facebook, x, github, instagram, website } = formData;
 
         if(username.length < 3){
             return toast.error("Username should be al least 3 letters long")
@@ -112,7 +112,7 @@ const EditProfile = () => {
 
         axios.post(import.meta.env.VITE_NODE_SERVER_DOMAIN + "/update-profile", {
             username, bio, 
-            social_links: { youtube, facebook, twitter, github, instagram, website }
+            social_links: { youtube, facebook, x, github, instagram, website }
         }, {
             headers: {
                 'Authorization': `Bearer ${access_token}`

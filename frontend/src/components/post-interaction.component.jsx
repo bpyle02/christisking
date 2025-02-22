@@ -91,7 +91,7 @@ const PostInteraction = () => {
                         <Link to={`/editor/${post_id}`} className="underline hover:text-purple">Edit</Link> : ""
                     }
 
-                    <Link to={`https://twitter.com/intent/tweet?text=Read ${title}&url=${location.href}`}><i className="fi fi-brands-twitter text-xl hover:text-twitter"></i></Link>
+                    <Link to={`https://x.com/intent/tweet?text=Read ${title}&url=${location.href}`}><i className="fi fi-brands-twitter text-xl hover:text-twitter"></i></Link>
                 </div>
             </div>
 

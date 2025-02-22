@@ -66,7 +66,7 @@ describe('AboutUser Component', () => {
       bio: 'Test bio',
       social_links: {
         facebook: 'https://facebook.com/test',
-        twitter: 'https://twitter.com/test',
+        x: 'https://x.com/test',
         instagram: 'https://instagram.com/test',
         website: 'https://example.com',
       },
@@ -81,7 +81,7 @@ describe('AboutUser Component', () => {
     expect(links[0]).toHaveAttribute('href', 'https://facebook.com/test');
     expect(links[0].querySelector('i')).toHaveClass('fi-brands-facebook');
     
-    expect(links[1]).toHaveAttribute('href', 'https://twitter.com/test');
+    expect(links[1]).toHaveAttribute('href', 'https://x.com/test');
     expect(links[1].querySelector('i')).toHaveClass('fi-brands-twitter');
     
     expect(links[2]).toHaveAttribute('href', 'https://instagram.com/test');
@@ -109,7 +109,7 @@ describe('AboutUser Component', () => {
       bio: 'Test bio',
       social_links: {
         facebook: 'https://facebook.com/test',
-        twitter: '',
+        x: '',
         instagram: 'https://instagram.com/test',
         website: null,
       },
