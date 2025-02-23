@@ -41,7 +41,7 @@ const ProfilePage = () => {
     let { userAuth: { username } } = useContext(UserContext)
 
     const fetchUserProfile = () => {
-        axios.post(import.meta.env.VITE_NODE_SERVER_DOMAIN + "/get-profile", { username: profileId })
+        axios.get(import.meta.env.VITE_NODE_SERVER_DOMAIN + "/users/" + profileId)
         .then(({ data: user }) => {
             if(user != null){
                 setProfile(user);
