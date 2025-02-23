@@ -69,6 +69,46 @@ mongoose.connect((process.env.DB_LOCATION), {
     autoIndex: true
 })
 
+const chaosMonkey = {
+    // Simulate database connection failure
+    async simulateDBFailure() {
+        await mongoose.disconnect();
+        console.log('Chaos Monkey: Simulated database disconnection');
+        setTimeout(() => {
+            mongoose.connect(process.env.DB_LOCATION, {
+                autoIndex: true
+            });
+        }, 5000);
+    },
+
+    // Simulate high network latency
+    simulateNetworkLatency(req, res, next) {
+        const delay = Math.floor(Math.random() * 3000);
+        setTimeout(() => next(), delay);
+    },
+
+    // Simulate high CPU usage
+    simulateCPULoad() {
+        console.log('Chaos Monkey: Simulating CPU overload');
+        const start = Date.now();
+        while (Date.now() - start < 5000) {
+            Math.sqrt(Math.random() * 1000000);
+        }
+    },
+
+    // Randomly trigger failures when CHAOS_MONKEY is true (happens only suring GitHub Actions testing)
+    maybeChaos() {
+        if (process.env.CHAOS_MONKEY === 'true' && Math.random() < 0.3) {
+            const chaosMethods = [
+                this.simulateDBFailure,
+                this.simulateCPULoad
+            ];
+            const randomChaos = chaosMethods[Math.floor(Math.random() * chaosMethods.length)];
+            randomChaos();
+        }
+    }
+};
+
 export const verifyJWT = (req, res, next) => {
 
     const authHeader = req.headers['authorization'];
@@ -115,6 +155,8 @@ export const generateUsername = async (email) => {
 }
 
 app.post("/users", async (req, res) => {
+    chaosMonkey.maybeChaos();
+
     let { fullname, email, password } = req.body;
     let isAdmin = process.env.ADMIN_EMAILS.split(",").includes(email);
 
@@ -160,6 +202,8 @@ app.post("/users", async (req, res) => {
 });
 
 app.post("/signin", (req, res) => {
+
+    chaosMonkey.maybeChaos();
 
     let { email, password } = req.body;
 
@@ -431,6 +475,8 @@ app.post("/users/:id", verifyJWT, edit_account_limiter, (req, res) => {
 
 app.post("/latest-posts", (req, res) => {
 
+    chaosMonkey.maybeChaos();
+
     let { page } = req.body;
 
     let maxLimit = 5;
@@ -464,6 +510,8 @@ app.post("/all-latest-posts-count", (req, res) => {
 })
 
 app.get("/trending-posts", (req, res) => {
+
+    chaosMonkey.maybeChaos();
 
     Post.find({ draft: false })
     .populate("author", "personal_info.profile_img personal_info.username personal_info.fullname -_id")
@@ -1110,6 +1158,17 @@ app.delete("/users/:id", verifyJWT, (req, res) => {
             console.log(err)
             res.status(500).json({ error: "Error deleting user" });
         });
+});
+
+// Chaos testing endpoint
+app.get('/chaos-test', verifyJWT, async (req, res) => {
+    try {
+        await chaosMonkey.simulateDBFailure();
+        chaosMonkey.simulateCPULoad();
+        res.status(200).json({ message: 'Chaos testing completed' });
+    } catch (error) {
+        res.status(500).json({ error: 'Chaos testing failed', details: error.message });
+    }
 });
 
 app.listen(PORT, '0.0.0.0', () => {
