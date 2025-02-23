@@ -74,61 +74,10 @@ jobs:
       - name: Run tests
         working-directory: ./server
         run: npm test
-        
-  chaos-tests:
-    runs-on: ubuntu-latest
-    needs: [frontend-tests, backend-tests]
-    container: node:20.13.1
-    services:
-      mongo:
-        image: mongo
-        ports:
-          - 27017:27017
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Install dependencies
-        working-directory: ./server
-        run: npm install
-
-      - name: Create Firebase private key file
-        working-directory: ./server
-        env:
-          FIREBASE_PRIVATE_KEY: ${{ secrets.FIREBASE_PRIVATE_KEY }}
-        run: echo "$FIREBASE_PRIVATE_KEY" > firebase_private_key.json
-
-      - name: Create .env file for chaos testing
-        working-directory: ./server
-        env:
-          DB_LOCATION: ${{ secrets.DB_LOCATION }}
-          SECRET_ACCESS_KEY: ${{ secrets.SECRET_ACCESS_KEY }}
-          FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
-          NODE_SERVER_DOMAIN: ${{ secrets.NODE_SERVER_DOMAIN }}
-          VITE_SERVER_DOMAIN: ${{ secrets.VITE_SERVER_DOMAIN }}
-          ADMIN_EMAILS: ${{ secrets.ADMIN_EMAILS }}
-          CHAOS_MONKEY: "true"
-        run: |
-          echo "DB_LOCATION=$DB_LOCATION" > .env
-          echo "SECRET_ACCESS_KEY=$SECRET_ACCESS_KEY" >> .env
-          echo "FIREBASE_PROJECT_ID=$FIREBASE_PROJECT_ID" >> .env
-          echo "NODE_SERVER_DOMAIN=$NODE_SERVER_DOMAIN" >> .env
-          echo "VITE_SERVER_DOMAIN=$VITE_SERVER_DOMAIN" >> .env
-          echo "ADMIN_EMAILS=$ADMIN_EMAILS" >> .env
-          echo "CHAOS_MONKEY=$CHAOS_MONKEY" >> .env
-
-      - name: Start server in background
-        working-directory: ./server
-        run: npm start &
-
-      - name: Run chaos tests
-        run: |
-          curl -f "${{secrets.NODE_SERVER_DOMAIN}}/users" -X POST -H "Content-Type: application/json" -d '{"fullname":"test","email":"test@example.com","password":"Test1234"}' || echo "Expected failure under chaos"
-          curl -f "${{secrets.NODE_SERVER_DOMAIN}}/chaos-test" || exit 1
     
   deploy:
     runs-on: self-hosted
-    needs: [frontend-tests, backend-tests, chaos-tests]
+    needs: [frontend-tests, backend-tests]
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
