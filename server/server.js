@@ -16,6 +16,7 @@ import Post from './Schema/Post.js';
 import Uploads from './Schema/Uploads.js';
 import Notification from "./Schema/Notification.js";
 import Comment from "./Schema/Comment.js";
+import rateLimit from 'express-rate-limit';
 
 const app = express();
 const storage = multer.memoryStorage();
@@ -32,6 +33,23 @@ let emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/; // regex for e
 let passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/; // regex for password
 let PORT = 3173;
 
+const standard_limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 1000ms in a second * 60 seconds in a minute * 15 = 15 minutes in milliseconds
+    max: 100 // limit each IP to 100 requests per windowMs
+});
+export const edit_account_limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100 // limit each IP to 100 requests per windowMs
+});
+const new_account_limiter = rateLimit({
+    windowMs: 30 * 60 * 1000, // 30 minutes
+    max: 100 // limit each IP to 5 requests per windowMs
+});
+const delete_account_limiter = rateLimit({
+    windowMs: 30 * 60 * 1000, // 30 minutes
+    max: 100 // limit each IP to 5 requests per windowMs
+});
+
 app.use(express.json());
 app.use(cors(
     {
@@ -41,7 +59,11 @@ app.use(cors(
         allowedHeaders: ["Content-Type", "Authorization", 'username'],
         preflightContinue: false,
     }
-))
+));
+app.use(standard_limiter);
+app.use(edit_account_limiter);
+app.use(new_account_limiter);
+app.use(delete_account_limiter);
 
 mongoose.connect((process.env.DB_LOCATION), {
     autoIndex: true
@@ -362,50 +384,52 @@ app.get('/uploads/:filename', async (req, res) => {
     }
 });
 
-app.post("/change-password", verifyJWT, (req, res) => {
+// Update User Password
+app.post("/users/:id", verifyJWT, edit_account_limiter, (req, res) => {
 
-    let { currentPassword, newPassword } = req.body; 
+    let { currentPassword, newPassword } = req.body;
 
-    if(!passwordRegex.test(currentPassword) || !passwordRegex.test(newPassword)){
+    if (!passwordRegex.test(currentPassword) || !passwordRegex.test(newPassword)) {
         return res.status(403).json({ error: "Password should be 6 to 20 characters long with a numeric, 1 lowercase and 1 uppercase letters" })
     }
 
-    User.findOne({ _id: req.user })
-    .then((user) => {
-
-        if(user.google_auth){
-            return res.status(403).json({ error: "You can't change account's password because you logged in through google" })
-        }
-
-        bcrypt.compare(currentPassword, user.personal_info.password, (err, result) => {
-            if(err) {
-                return res.status(500).json({ error: "Some error occured while changing the password, please try again later" })
-            }
-
-            if(!result){
-                return res.status(403).json({ error: "Incorrect current password" })
-            }
-
-            bcrypt.hash(newPassword, 10, (err, hashed_password) => {
-
-                User.findOneAndUpdate({ _id: req.user }, { "personal_info.password": hashed_password })
-                .then((u) => {
-                    return res.status(200).json({ status: 'password changed' })
+    if (req.user === req.originalUrl.split('/')[2]) {
+        User.findOne({ _id: req.user })
+            .then((user) => {
+                if (user.google_auth) {
+                    return res.status(403).json({ error: "You can't change account's password because you logged in through google" })
+                }
+    
+                bcrypt.compare(currentPassword, user.personal_info.password, (err, result) => {
+                    if (err) {
+                        return res.status(500).json({ error: "Some error occured while changing the password, please try again later" })
+                    }
+    
+                    if (!result) {
+                        return res.status(403).json({ error: "Incorrect current password" })
+                    }
+    
+                    bcrypt.hash(newPassword, 10, (err, hashed_password) => {
+    
+                        User.findOneAndUpdate({ _id: req.user }, { "personal_info.password": hashed_password })
+                            .then((u) => {
+                                return res.status(200).json({ status: 'password changed' })
+                            })
+                            .catch(err => {
+                                return res.status(500).json({ error: 'Some error occured while saving new password, please try again later' })
+                            })
+        
+                        })
+                    })
                 })
-                .catch(err => {
-                    return res.status(500).json({ error: 'Some error occured while saving new password, please try again later' })
-                })
-
+            .catch(err => {
+                console.log(err);
+                return res.status(500).json({ error: "Unexpected server error" })
             })
-        })
-
-    })
-    .catch(err => {
-        console.log(err);
-        res.status(500).json({ error : "User not found" })
-    })
-
-})
+    } else {
+        return res.status(403).json({ error: "Incorrect User ID. You can only edit your account" }) 
+    }
+});
 
 app.post("/latest-posts", (req, res) => {
 
@@ -529,89 +553,62 @@ app.post("/search-users", (req, res) => {
 
 })
 
-app.post("/get-profile", (req, res) => {
+// app.post("/get-profile", (req, res) => {
 
-    let { username } = req.body;
+//     let { username } = req.body;
 
-    User.findOne({ "personal_info.username": username })
-    .select("-personal_info.password -google_auth -updatedAt -posts")
-    .then(user => {
-        return res.status(200).json(user)
-    })
-    .catch(err => {
-        console.log(err);
-        return res.status(500).json({ error: err.message })
-    })
+//     User.findOne({ "personal_info.username": username })
+//     .select("-personal_info.password -google_auth -updatedAt -posts")
+//     .then(user => {
+//         return res.status(200).json(user)
+//     })
+//     .catch(err => {
+//         console.log(err);
+//         return res.status(500).json({ error: err.message })
+//     })
 
-})
+// })
+//
+//
+//
+//
+//
+// Get User Data
+app.get("/users/:username", standard_limiter, (req, res) => {
+    User.findOne({ "personal_info.username": req.params.username })
+        .select("-personal_info.password -google_auth -facebook_auth -updatedAt -posts -admin")
+        .then(user => {
+            if (!user) return res.status(404).json({ error: "User not found" });
+            res.status(200).json(user);
+        })
+        .catch(err => {
+            res.status(500).json({ error: err.message })
+        });
+});
 
-app.post("/update-profile-img", verifyJWT, (req, res) => {
+// Edit User
+app.put("/users/:id", verifyJWT, edit_account_limiter, (req, res) => {
+    const updateData = {
+        "personal_info.username": req.body.username,
+        "personal_info.bio": req.body.bio,
+        "social_links": req.body.social_links
+    };
 
-    let { url } = req.body;
+    if (req.user !== req.originalUrl.split('/')[2]) return res.status(403).json({ error: "Forbidden" });
 
-    User.findOneAndUpdate({ _id: req.user }, { "personal_info.profile_img": url })
-    .then(() => {
-        return res.status(200).json({ profile_img: url })
-    })
-    .catch(err => {
-        return res.status(500).json({ error: err.message })
-    })
-
-})
-
-app.post("/update-profile", verifyJWT, (req, res) => {
-
-    let { username, bio, social_links } = req.body;
-
-    let bioLimit = 150;
-
-    if(username.length < 3){
-        return res.status(403).json({ error: "Username should be at least 3 letters long" });
-    }
-
-    if(bio.length > bioLimit){
-        return res.status(403).json({ error: `Bio should not be more than ${bioLimit} characters` });
-    }
-
-    let socialLinksArr = Object.keys(social_links);
-
-    try {
-
-        for(let i = 0; i < socialLinksArr.length; i++){
-            if(social_links[socialLinksArr[i]].length){
-                let hostname = new URL(social_links[socialLinksArr[i]]).hostname; 
-
-                if(!hostname.includes(`${socialLinksArr[i]}.com`) && socialLinksArr[i] != 'website'){
-                    return res.status(403).json({ error: `${socialLinksArr[i]} link is invalid. You must enter a full link` })
-                }
-
+    User.findOneAndUpdate({ _id: req.user }, updateData, { new: true, runValidators: true })
+        .select("-personal_info.password -google_auth -facebook_auth -updatedAt -posts -admin")
+        .then(updatedUser => {
+            res.status(200).json({ updatedUser });
+        })
+        .catch(err => {
+            console.log(err)
+            if (err.code == 11000) {
+                return res.status(409).json({ error: "Username already taken" })
             }
-        }
-
-    } catch (err) {
-        return res.status(500).json({ error: "You must provide full social links with http(s) included" })
-    }
-
-    let updateObj = {
-        "personal_info.username": username,
-        "personal_info.bio": bio,
-        social_links
-    }
-
-    User.findOneAndUpdate({ _id: req.user }, updateObj, {
-        runValidators: true
-    })
-    .then(() => {
-        return res.status(200).json({ username })
-    })
-    .catch(err => {
-        if(err.code == 11000){
-            return res.status(409).json({ error: "username is already taken" })
-        }
-        return res.status(500).json({ error: err.message })
-    })
-
-})
+            res.status(500).json({ error: err.message });
+        });
+});
 
 app.post('/create-post', verifyJWT, (req, res) => {
 

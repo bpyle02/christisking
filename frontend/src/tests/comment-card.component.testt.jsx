@@ -208,7 +208,7 @@ describe('CommentCard', () => {
     fireEvent.click(screen.getByText('2 Reply'));
     await waitFor(() => {
       expect(axios.post).toHaveBeenCalledWith(
-        `${import.meta.env.VITE_SERVER_DOMAIN}/get-replies`,
+        `${import.meta.env.VITE_NODE_SERVER_DOMAIN}/get-replies`,
         { _id: 'comment1', skip: 0 }
       );
       expect(postContextWithReplies.setPost).toHaveBeenCalled();
@@ -251,7 +251,7 @@ describe('CommentCard', () => {
     fireEvent.click(screen.getByText('fi-rr-trash'));
     await waitFor(() => {
       expect(axios.post).toHaveBeenCalledWith(
-        `${import.meta.env.VITE_SERVER_DOMAIN}/delete-comment`,
+        `${import.meta.env.VITE_NODE_SERVER_DOMAIN}/delete-comment`,
         { _id: 'comment1' },
         { headers: { Authorization: `Bearer ${defaultUserContext.userAuth.access_token}` } }
       );

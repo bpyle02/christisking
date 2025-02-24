@@ -3,7 +3,9 @@ import AnimationWrapper from "../common/page-animation"
 import InputBox from "../components/input.component";
 import { useContext, useRef } from "react";
 import { toast, Toaster } from "react-hot-toast";
-import { UserContext } from "../App"
+import { UserContext } from "../App";
+import { jwtDecode } from 'jwt-decode';
+
 
 const ChangePassword = () => {
 
@@ -12,6 +14,8 @@ const ChangePassword = () => {
     let changePasswordForm = useRef();
 
     let passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/;
+
+    const jwt_data = jwtDecode(access_token);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -37,7 +41,7 @@ const ChangePassword = () => {
 
         let loadingToast = toast.loading("Updating....");
 
-        axios.post(import.meta.env.VITE_NODE_SERVER_DOMAIN + "/change-password", formData, {
+        axios.post(import.meta.env.VITE_NODE_SERVER_DOMAIN + "/users/" + jwt_data.id, formData, {
             headers: {
                 'Authorization': `Bearer ${access_token}`
             }

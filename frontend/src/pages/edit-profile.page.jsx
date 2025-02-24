@@ -7,8 +7,12 @@ import Loader from "../components/loader.component";
 import toast, { Toaster } from "react-hot-toast";
 import InputBox from "../components/input.component";
 import { storeInSession } from "../common/session";
+import { useNavigate } from "react-router-dom";
+import { jwtDecode } from 'jwt-decode'
 
 const EditProfile = () => {
+
+    const navigate = useNavigate();
 
     let { userAuth, userAuth: { access_token }, setUserAuth } = useContext(UserContext);
 
@@ -24,10 +28,12 @@ const EditProfile = () => {
 
     let { personal_info: { fullname, username: profile_username, profile_img, email, bio }, social_links } = profile;
 
+    const jwt_data = jwtDecode(access_token);
+
     useEffect(() => {
 
         if(access_token){
-            axios.post(import.meta.env.VITE_NODE_SERVER_DOMAIN + "/get-profile", { username: userAuth.username })
+            axios.get(import.meta.env.VITE_NODE_SERVER_DOMAIN + "/users/" + userAuth.username)
             .then(({ data }) => {
                 setProfile(data);
                 setLoading(false);
@@ -92,41 +98,59 @@ const EditProfile = () => {
         e.preventDefault();
 
         let form = new FormData(editProfileForm.current);
-        let formData = { };
+        let formData = {};
 
-        for(let [key, value] of form.entries()){
+        for (let [key, value] of form.entries()) {
             formData[key] = value;
         }
 
-        let { username, bio, youtube, facebook, x, github, instagram, website } = formData;
-
-        if(username.length < 3){
-            return toast.error("Username should be al least 3 letters long")
+        if (formData.username.length < 3) {
+            return toast.error("Username should be al least 3 characters long")
         }
-        if(bio.length > bioLimit){
-            return toast.error(`Bio should not be more than ${bioLimit}`)
+        if (formData.bio.length > bioLimit) {
+            return toast.error(`Bio should not be more than ${bioLimit} characters`)
         }
 
-        let loadingToast = toast.loading("Updating.....");
+        const updateData = {
+            username: formData.username,
+            bio: formData.bio,
+            social_links: {
+                youtube: formData.youtube,
+                facebook: formData.facebook,
+                twitter: formData.twitter,
+                github: formData.github,
+                instagram: formData.instagram,
+                website: formData.website
+            }
+        };
+
+        console.log("frontend data:", updateData)
+        console.log(import.meta.env.VITE_NODE_SERVER_DOMAIN)
+
+        let loadingToast = toast.loading("Updating...");
         e.target.setAttribute("disabled", true);
 
-        axios.post(import.meta.env.VITE_NODE_SERVER_DOMAIN + "/update-profile", {
-            username, bio, 
-            social_links: { youtube, facebook, x, github, instagram, website }
-        }, {
+        axios.put(
+            import.meta.env.VITE_NODE_SERVER_DOMAIN + "/users/" + jwt_data.id,
+            updateData, {
             headers: {
                 'Authorization': `Bearer ${access_token}`
             }
         })
         .then(({ data }) => {
+            console.log("Server response:", data.updatedUser);
 
-            if(userAuth.username != data.username){
+            let new_data = data.updatedUser
 
-                let newUserAuth = { ...userAuth, username: data.username };
-                
-                storeInSession("user", JSON.stringify(newUserAuth));
+            if (userAuth.username !== data.username) {
+                let newUserAuth = {
+                    ...userAuth,
+                    username: new_data.personal_info.username,
+                    // bio: new_data.personal_info.bio,
+                    // social_links: new_data.personal_info.social_links
+                };
+                sessionStorage.setItem("user", JSON.stringify(newUserAuth));
                 setUserAuth(newUserAuth);
-
             }
 
             toast.dismiss(loadingToast);
@@ -134,13 +158,54 @@ const EditProfile = () => {
             toast.success("Profile Updated")
 
         })
-        .catch(({ response }) => {
+        .catch((error) => {
+            console.error("Update error:", error);
             toast.dismiss(loadingToast);
             e.target.removeAttribute("disabled");
-            toast.error(response.data.error)
-        })
+            toast.error(error.response?.data?.error || "Failed to update profile");
+        });
 
     }
+
+    const handleDeleteProfile = async (e) => {
+        e.preventDefault(); // Prevent form submission
+
+        // Show confirmation dialog
+        if (!window.confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+            return;
+        }
+
+        try {
+            const loadingToast = toast.loading('Deleting account...');
+
+            const response = await axios.delete(import.meta.env.VITE_NODE_SERVER_DOMAIN + '/users/' + jwt_data.id, {
+                headers: {
+                    'Authorization': `Bearer ${access_token}`
+                }
+            });
+
+            if (response.status === 200) {
+                // Clear all authentication data
+                sessionStorage.removeItem('user');
+                localStorage.removeItem('jwtToken');
+
+                // Update auth context
+                setUserAuth({ access_token: null });
+
+                toast.dismiss(loadingToast);
+                toast.success('Account deleted successfully');
+
+                // Redirect to signup page
+                navigate('/signup');
+            } else {
+                toast.dismiss(loadingToast);
+                toast.error('Unexpected response from server. Please try again.');
+            }
+        } catch (error) {
+            console.error('Error deleting account:', error);
+            toast.error(error.response?.data?.error || 'There was an error deleting your account. Please try again.');
+        }
+    };
 
     return (
         <AnimationWrapper>
@@ -209,7 +274,10 @@ const EditProfile = () => {
 
                             </div>
 
-                            <button className="btn-dark w-auto px-10" type="submit" onClick={handleSubmit}>Update</button>
+                            <div className="flex justify-between mt-6">
+                                <button className="btn-dark w-auto px-10" type="submit" onClick={handleSubmit}>Update</button>
+                                <button className="btn-dark bg-rose-950 text-black w-auto px-10" type="button" onClick={handleDeleteProfile}>Delete Profile</button>
+                            </div>
 
                         </div>
 
