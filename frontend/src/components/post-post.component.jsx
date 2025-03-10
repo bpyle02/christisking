@@ -44,12 +44,9 @@ const PostPostCard = ({ content, author }) => {
                 <div className="flex flex-col p-4 md:flex-row border-b border-grey">
                     <div className="md:w-1/2 w-full md:pr-[1rem] md:flex md:items-center">
                             <img
-                                className="rounded-xl"
+                                className="rounded-xl w-full h-auto object-cover"
                                 src={bannerUrl}
                                 alt={title}
-                                layout="responsive"
-                                width={500}
-                                height={150}
                             />
                     </div>
                     <div className="md:w-1/2 md:pl-[1rem]">
