@@ -44,7 +44,7 @@ const PostPostCard = ({ content, author }) => {
                 <div className="flex flex-col p-4 md:flex-row border-b border-grey">
                     <div className="md:w-1/2 w-full md:pr-[1rem] md:flex md:items-center">
                             <img
-                                className="rounded-xl duration-300 transition-shadow"
+                                className="rounded-xl"
                                 src={bannerUrl}
                                 alt={title}
                                 layout="responsive"
@@ -53,12 +53,20 @@ const PostPostCard = ({ content, author }) => {
                             />
                     </div>
                     <div className="md:w-1/2 md:pl-[1rem]">
-                        <div className="flex gap-2 items-center mb-7">
+                        <div className="flex gap-2 items-center my-4">
                             <img src={profile_img} referrerPolicy="no-referrer" className="w-8 h-8 rounded-full" />
                             <p className="line-clamp-1">{fullname} @{username}</p>
-                            <p className="min-w-fit">{ getDay(publishedAt) }</p>
+                            <p className="min-w-fit">
+                                {String(new Date(publishedAt).toLocaleDateString(
+                                "en-US", {
+                                    day: "numeric",
+                                    month: "short",
+                                    year: "numeric",
+                                }
+                                ))}
+                            </p>
                         </div>
-                        <p className="text-4xl font-bold duration-300 transition-colors">{title}</p>
+                        <p className="text-4xl font-bold">{title}</p>
                         <div className="flex gap-3 flex-wrap my-2">
                             <span className="mr-3 flex items-center gap-2 text-dark-grey">
                                 <i className="fi fi-rr-heart text-xl"></i>
