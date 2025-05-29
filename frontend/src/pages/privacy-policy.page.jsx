@@ -3,6 +3,8 @@ import lightFullLogo from "../images/full-logo-light.png";
 import darkFullLogo from "../images/full-logo-dark.png";
 import { ThemeContext } from "../App";
 import { useContext } from "react";
+import { Helmet } from 'react-helmet-async';
+
 
 const PrivacyPolicy = () => {
 

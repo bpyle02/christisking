@@ -11,6 +11,8 @@ import PostPostCard from "../components/post-post.component";
 import NoDataMessage from "../components/nodata.component";
 import LoadMoreDataBtn from "../components/load-more.component";
 import PageNotFound from "./404.page";
+import { Helmet } from 'react-helmet-async';
+
 
 export const profileDataStructure = {
     personal_info: {

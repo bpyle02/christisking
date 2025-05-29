@@ -8,6 +8,8 @@ import PostInteraction from "../components/post-interaction.component";
 import PostPostCard from "../components/post-post.component";
 import PostContent from "../components/post-content.component";
 import CommentsContainer, { fetchComments } from "../components/comments.component";
+import { Helmet } from 'react-helmet-async';
+
 
 export const postStructure = {
     title: '',
@@ -79,7 +81,7 @@ const PostPage = () => {
                 <meta name="keywords" content={`christisking, christ is king, christisking.info, post, blog, article, ${title}, ${author_username}, ${tags.join(",")}`} />
                 <meta property="og:title" content={`christisking | ${title}`} />
                 <meta property="og:description" content={des} />
-                <meta property="og:image" content="https://raw.githubusercontent.com/bpyle02/christisking/refs/heads/main/frontend/src/images/default%20card.png" />
+                <meta property="og:image" content={bannerUrl} />
                 <meta property="og:url" content={`https://christisking.info/user/${profile_username}`} />
                 <meta name="twitter:card" content="summary_large_image" />
             </Helmet>

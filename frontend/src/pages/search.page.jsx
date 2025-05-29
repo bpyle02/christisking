@@ -9,6 +9,8 @@ import LoadMoreDataBtn from "../components/load-more.component";
 import axios from "axios";
 import { filterPaginationData } from "../common/filter-pagination-data";
 import UserCard from "../components/usercard.component";
+import { Helmet } from 'react-helmet-async';
+
 
 const SearchPage = () => {
 
