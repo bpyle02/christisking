@@ -77,53 +77,66 @@ const SearchPage = () => {
     }
 
     return (
-        <section className="h-cover flex justify-center gap-10">
+        <>
+            <Helmet>
+                <title>christisking | Search</title>
+                <meta name="description" content="Search christisking's library of articles." />
+                <meta name="keywords" content="christisking, christ is king, christisking.info, search, articles, article, article search, search page" />
+                <meta property="og:title" content="christisking | Search" />
+                <meta property="og:description" content="PleaSearch christisking's library of articles." />
+                <meta property="og:image" content="https://raw.githubusercontent.com/bpyle02/christisking/refs/heads/main/frontend/src/images/default%20card.png" />
+                <meta property="og:url" content="https://christisking.info/search" />
+                <meta name="twitter:card" content="summary_large_image" />
+            </Helmet>
 
-            <div className="w-full">
-                <InPageNavigation routes={[`Search Results from "${query}"`, "Accounts Matched"]} defaultHidden={["Accounts Matched"]} >
+            <section className="h-cover flex justify-center gap-10">
 
-                    <>
-                        {posts == null ? (
+                <div className="w-full">
+                    <InPageNavigation routes={[`Search Results from "${query}"`, "Accounts Matched"]} defaultHidden={["Accounts Matched"]} >
+
+                        <>
+                            {posts == null ? (
                                 <Loader />
                             ) : (
                                 posts.results.length ? 
-                                    posts.results.map((post, i) => {
-                                        return (
-                                            <AnimationWrapper
-                                                transition={{
-                                                    duration: 1,
-                                                    delay: i * 0.1,
-                                                }}
-                                                key={i}
-                                            >
-                                                <PostPostCard
-                                                    content={post}
-                                                    author={
-                                                        post.author.personal_info
-                                                    }
-                                                />
-                                            </AnimationWrapper>
-                                        );
-                                    })
-                                : <NoDataMessage message="No posts published" />
-                            )}
-                            <LoadMoreDataBtn state={posts} fetchDataFun={searchPosts} />
-                    </>
+                                posts.results.map((post, i) => {
+                                    return (
+                                        <AnimationWrapper
+                                        transition={{
+                                            duration: 1,
+                                            delay: i * 0.1,
+                                        }}
+                                        key={i}
+                                        >
+                                                    <PostPostCard
+                                                        content={post}
+                                                        author={
+                                                            post.author.personal_info
+                                                        }
+                                                        />
+                                                </AnimationWrapper>
+                                            );
+                                        })
+                                        : <NoDataMessage message="No posts published" />
+                                    )}
+                                <LoadMoreDataBtn state={posts} fetchDataFun={searchPosts} />
+                        </>
 
-                    <UserCardWrapper />
+                        <UserCardWrapper />
 
-                </InPageNavigation>
-            </div>
+                    </InPageNavigation>
+                </div>
 
-            <div className="min-w-[40%] lg:min-w-[350px] max-w-min border-l border-grey pl-8 pt-3 max-md:hidden">
+                <div className="min-w-[40%] lg:min-w-[350px] max-w-min border-l border-grey pl-8 pt-3 max-md:hidden">
 
-                <h1 className="font-medium text-xl mb-8">User related to search <i className="fi fi-rr-user mt-1"></i></h1>  
+                    <h1 className="font-medium text-xl mb-8">User related to search <i className="fi fi-rr-user mt-1"></i></h1>  
 
-                <UserCardWrapper />            
+                    <UserCardWrapper />            
 
-            </div>
+                </div>
 
-        </section>
+            </section>
+        </>
     )
 }
 

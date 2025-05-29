@@ -101,78 +101,90 @@ const ProfilePage = () => {
     }
 
     return (
+        <>
+            <Helmet>
+                <title>christisking | Profile</title>
+                <meta name="description" content="View your christisking profile." />
+                <meta name="keywords" content="christisking, christ is king, christisking.info, profile, account, my profile, my account, edit profile" />
+                <meta property="og:title" content="christisking | Profile" />
+                <meta property="og:description" content="View your christisking profile." />
+                <meta property="og:image" content="https://raw.githubusercontent.com/bpyle02/christisking/refs/heads/main/frontend/src/images/default%20card.png" />
+                <meta property="og:url" content={`https://christisking.info/user/${profile_username}`} />
+                <meta name="twitter:card" content="summary_large_image" />
+            </Helmet>
 
-        <AnimationWrapper>
-            {
-                loading ? <Loader /> : 
+            <AnimationWrapper>
+                {
+                    loading ? <Loader /> : 
                     profile_username.length ?
-                        <section className="h-cover md:flex flex-row-reverse items-start gap-5 min-[1100px]:gap-12">
-                            <div className="flex flex-col max-md:items-center gap-5 min-w-[250px] md:w-[50%] md:pl-8 md:border-l border-grey md:sticky md:top-[100px] md:py-10">
+                    <section className="h-cover md:flex flex-row-reverse items-start gap-5 min-[1100px]:gap-12">
+                                <div className="flex flex-col max-md:items-center gap-5 min-w-[250px] md:w-[50%] md:pl-8 md:border-l border-grey md:sticky md:top-[100px] md:py-10">
 
-                                <img src={profile_img} referrerPolicy="no-referrer" className="w-48 h-48 bg-grey rounded-full md:w-32 md:h-32" />
+                                    <img src={profile_img} referrerPolicy="no-referrer" className="w-48 h-48 bg-grey rounded-full md:w-32 md:h-32" />
 
-                                <h1 className="text-2xl font-medium">@
-                                {profile_username}</h1>
-                                <p className="text-xl capitalize h-6">{fullname}</p>
+                                    <h1 className="text-2xl font-medium">@
+                                    {profile_username}</h1>
+                                    <p className="text-xl capitalize h-6">{fullname}</p>
 
-                                <p>{total_posts.toLocaleString()} Posts - {total_reads.toLocaleString()} Reads</p>
+                                    <p>{total_posts.toLocaleString()} Posts - {total_reads.toLocaleString()} Reads</p>
 
-                                <div className="flex gap-4 mt-2">
-                                    {
-                                        profileId == username ?
-                                        <Link to="/settings/edit-profile" className="btn-light rounded-md">Edit Profile</Link>
-                                        : " "
-                                    }
+                                    <div className="flex gap-4 mt-2">
+                                        {
+                                            profileId == username ?
+                                            <Link to="/settings/edit-profile" className="btn-light rounded-md">Edit Profile</Link>
+                                            : " "
+                                        }
+                                    </div>
+
+                                    <AboutUser className="max-md:hidden" bio={bio} social_links={social_links} joinedAt={joinedAt} />
+
                                 </div>
 
-                                <AboutUser className="max-md:hidden" bio={bio} social_links={social_links} joinedAt={joinedAt} />
+                                <div className="max-md:mt-12 w-full">
 
-                            </div>
-
-                            <div className="max-md:mt-12 w-full">
-
-                            <InPageNavigation
-                                    routes={[ "Posts Published" , "About"]}
-                                    defaultHidden={["About"]}
-                                >
-                                    <>
-                                        {posts == null ? (
-                                            <Loader />
-                                        ) : (
-                                            posts.results.length ? 
+                                <InPageNavigation
+                                        routes={[ "Posts Published" , "About"]}
+                                        defaultHidden={["About"]}
+                                        >
+                                        <>
+                                            {posts == null ? (
+                                                <Loader />
+                                            ) : (
+                                                posts.results.length ? 
                                                 posts.results.map((post, i) => {
                                                     return (
                                                         <AnimationWrapper
-                                                            transition={{
-                                                                duration: 1,
-                                                                delay: i * 0.1,
-                                                            }}
-                                                            key={i}
+                                                        transition={{
+                                                            duration: 1,
+                                                            delay: i * 0.1,
+                                                        }}
+                                                        key={i}
                                                         >
-                                                            <PostPostCard
-                                                                content={post}
-                                                                author={
-                                                                    post.author.personal_info
-                                                                }
-                                                            />
-                                                        </AnimationWrapper>
-                                                    );
-                                                })
-                                            : <NoDataMessage message="No posts published" />
-                                        )}
-                                        <LoadMoreDataBtn state={posts} fetchDataFun={getPosts} />
-                                    </>
+                                                                <PostPostCard
+                                                                    content={post}
+                                                                    author={
+                                                                        post.author.personal_info
+                                                                    }
+                                                                    />
+                                                            </AnimationWrapper>
+                                                        );
+                                                    })
+                                                    : <NoDataMessage message="No posts published" />
+                                                )}
+                                            <LoadMoreDataBtn state={posts} fetchDataFun={getPosts} />
+                                        </>
 
-                                    <AboutUser bio={bio} social_links={social_links} joinedAt={joinedAt} />
+                                        <AboutUser bio={bio} social_links={social_links} joinedAt={joinedAt} />
 
-                                </InPageNavigation>
+                                    </InPageNavigation>
 
-                            </div>
+                                </div>
 
-                        </section>
-                    : <PageNotFound />
-            }
-        </AnimationWrapper>
+                            </section>
+                        : <PageNotFound />
+                    }
+            </AnimationWrapper>
+        </>
 
     )
 }

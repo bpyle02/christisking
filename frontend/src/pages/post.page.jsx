@@ -31,7 +31,7 @@ const PostPage = () => {
     const [ commentsWrapper, setCommentsWrapper ] = useState(false);
     const [ totalParentCommentsLoaded, setTotalParentCommentsLoaded ] = useState(0);
 
-    let { title, content, bannerUrl, author: { personal_info: { fullname, username: author_username , profile_img } }, publishedAt } = post;
+    let { title, content, des, bannerUrl, author: { personal_info: { fullname, username: author_username , profile_img } }, publishedAt } = post;
 
     const fetchPost = () => {
         axios.post(import.meta.env.VITE_NODE_SERVER_DOMAIN + "/get-post", { post_id })
@@ -72,75 +72,88 @@ const PostPage = () => {
     }
 
     return (
-        <AnimationWrapper>
-            {
-                loading ? <Loader />
-                : 
-                <PostContext.Provider value={{ post, setPost, islikedByUser, setLikedByUser, commentsWrapper, setCommentsWrapper, totalParentCommentsLoaded, setTotalParentCommentsLoaded }}>
+        <>
+            <Helmet>
+                <title>christisking | {title}</title>
+                <meta name="description" content={des} />
+                <meta name="keywords" content={`christisking, christ is king, christisking.info, post, blog, article, ${title}, ${author_username}, ${tags.join(",")}`} />
+                <meta property="og:title" content={`christisking | ${title}`} />
+                <meta property="og:description" content={des} />
+                <meta property="og:image" content="https://raw.githubusercontent.com/bpyle02/christisking/refs/heads/main/frontend/src/images/default%20card.png" />
+                <meta property="og:url" content={`https://christisking.info/user/${profile_username}`} />
+                <meta name="twitter:card" content="summary_large_image" />
+            </Helmet>
 
-                    <CommentsContainer />
+            <AnimationWrapper>
+                {
+                    loading ? <Loader />
+                    : 
+                    <PostContext.Provider value={{ post, setPost, islikedByUser, setLikedByUser, commentsWrapper, setCommentsWrapper, totalParentCommentsLoaded, setTotalParentCommentsLoaded }}>
 
-                    <div className="max-w-[900px] center py-10 max-lg:px-[5vw]">
+                        <CommentsContainer />
 
-                        <img src={bannerUrl} className="aspect-video" />
+                        <div className="max-w-[900px] center py-10 max-lg:px-[5vw]">
 
-                        <div className="mt-12">
-                            <h2>{title}</h2>
+                            <img src={bannerUrl} className="aspect-video" />
 
-                            <div className="flex max-sm:flex-col justify-between my-8">
-                                <div className="flex gap-5 items-start">
-                                    <img src={profile_img} referrerPolicy="no-referrer" className="w-12 h-12 rounded-full" />
+                            <div className="mt-12">
+                                <h2>{title}</h2>
 
-                                    <p className="capitalize">
-                                        {fullname}
-                                        <br />
-                                        @
-                                        <Link to={`/user/${author_username}`} className="underline">{author_username}</Link>
-                                    </p>
-                                    
-                                </div>
-                                <p className="text-dark-grey opacity-75 max-sm:mt-6 max-sm:ml-12 max-sm:pl-5">Published on {getDay(publishedAt)}</p>
-                            </div>
-                        </div>
+                                <div className="flex max-sm:flex-col justify-between my-8">
+                                    <div className="flex gap-5 items-start">
+                                        <img src={profile_img} referrerPolicy="no-referrer" className="w-12 h-12 rounded-full" />
 
-                        <PostInteraction />
-
-                        <div className="my-12 font-gelasio post-page-content">
-                            {
-                                content[0].blocks.map((block, i) => {
-                                    return <div key={i} className="my-4 md:my-8">
-                                        <PostContent block={block} />
+                                        <p className="capitalize">
+                                            {fullname}
+                                            <br />
+                                            @
+                                            <Link to={`/user/${author_username}`} className="underline">{author_username}</Link>
+                                        </p>
+                                        
                                     </div>
-                                })
-                            }
-                        </div>
+                                    <p className="text-dark-grey opacity-75 max-sm:mt-6 max-sm:ml-12 max-sm:pl-5">Published on {getDay(publishedAt)}</p>
+                                </div>
+                            </div>
 
-                        <PostInteraction />
+                            <PostInteraction />
 
-                        {
-                            similarPosts != null && similarPosts.length ?
+                            <div className="my-12 font-gelasio post-page-content">
+                                {
+                                    content[0].blocks.map((block, i) => {
+                                        return <div key={i} className="my-4 md:my-8">
+                                            <PostContent block={block} />
+                                        </div>
+                                    })
+                                }
+                            </div>
+
+                            <PostInteraction />
+
+                            {
+                                similarPosts != null && similarPosts.length ?
                                 <>
-                                    <h1 className="text-2xl mt-14 mb-10 font-medium">Similar Posts</h1>
+                                        <h1 className="text-2xl mt-14 mb-10 font-medium">Similar Posts</h1>
 
-                                    {
-                                        similarPosts.map((post, i) => {
+                                        {
+                                            similarPosts.map((post, i) => {
+                                                
+                                                let { author: { personal_info } } = post;
+                                                
+                                                return <AnimationWrapper key={i} transition={{ duration: 1, delay: i*0.08 }}>
+                                                    <PostPostCard content={post} author={personal_info} />
+                                                </AnimationWrapper>
 
-                                            let { author: { personal_info } } = post;
+    })
+    }
+                                    </>
+                                : " "
+                            }
 
-                                            return <AnimationWrapper key={i} transition={{ duration: 1, delay: i*0.08 }}>
-                                                <PostPostCard content={post} author={personal_info} />
-                                            </AnimationWrapper>
-
-                                        })
-                                    }
-                                </>
-                            : " "
-                        }
-
-                    </div>
-                </PostContext.Provider>
-            }
-        </AnimationWrapper>
+                        </div>
+                    </PostContext.Provider>
+                }
+            </AnimationWrapper>
+        </>
     )
 }
 
