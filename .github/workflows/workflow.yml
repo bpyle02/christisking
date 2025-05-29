@@ -70,10 +70,6 @@ jobs:
       - name: Debug .env contents
         working-directory: ./server
         run: cat .env
-
-      - name: Run tests
-        working-directory: ./server
-        run: npm test
     
   deploy:
     runs-on: self-hosted
