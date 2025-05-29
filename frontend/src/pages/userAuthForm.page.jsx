@@ -127,7 +127,7 @@ const UserAuthForm = ({ type }) => {
                 <meta name="keywords" content="auth, oauth, authentication, google, facebook, email, sign up, sign in, signup, signin" />
                 <meta property="og:title" content="Authentication Page" />
                 <meta property="og:description" content="Please sign in or sign up using one of the available options." />
-                <meta property="og:image" content="" />
+                <meta property="og:image" content="https://raw.githubusercontent.com/bpyle02/christisking/refs/heads/main/frontend/src/images/default%20card.png" />
                 <meta property="og:url" content="https://christisking.info/signin" />
                 <meta name="twitter:card" content="summary_large_image" />
             </Helmet>
