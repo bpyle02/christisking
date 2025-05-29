@@ -16,6 +16,7 @@ import Notifications from "./pages/notifications.page";
 import ManagePosts from "./pages/manage-posts.page";
 import PrivacyPolicy from "./pages/privacy-policy.page";
 import DataDeletion from "./pages/data-deletion.page";
+import { HelmetProvider } from 'react-helmet-async';
 
 export const UserContext = createContext({});
 
@@ -52,33 +53,35 @@ const App = () => {
 
 
     return (
-        <ThemeContext.Provider value={{ theme, setTheme }}>
-            <UserContext.Provider value={{userAuth, setUserAuth}}>
-                <Routes>
-                    <Route path="/editor" element={<Editor />} />
-                    <Route path="/editor/:post_id" element={<Editor />} />
-                    <Route path="/" element={<Navbar />}> 
-                        <Route index element={<HomePage />} />
-                        <Route path="privacy-policy" element={<PrivacyPolicy />} />
-                        <Route path="data-deletion" element={<DataDeletion />} />
-                        <Route path="dashboard" element={<SideNav />} > 
-                            <Route path="posts" element={<ManagePosts />} />
-                            <Route path="notifications" element={<Notifications />} />
+        <HelmetProvider>
+            <ThemeContext.Provider value={{ theme, setTheme }}>
+                <UserContext.Provider value={{userAuth, setUserAuth}}>
+                    <Routes>
+                        <Route path="/editor" element={<Editor />} />
+                        <Route path="/editor/:post_id" element={<Editor />} />
+                        <Route path="/" element={<Navbar />}> 
+                            <Route index element={<HomePage />} />
+                            <Route path="privacy-policy" element={<PrivacyPolicy />} />
+                            <Route path="data-deletion" element={<DataDeletion />} />
+                            <Route path="dashboard" element={<SideNav />} > 
+                                <Route path="posts" element={<ManagePosts />} />
+                                <Route path="notifications" element={<Notifications />} />
+                            </Route>
+                            <Route path="settings" element={<SideNav />} >  
+                                <Route path="edit-profile" element={<EditProfile />} />
+                                <Route path="change-password" element={<ChangePassword />} />
+                            </Route>
+                            <Route path="signin" element={<UserAuthForm type="sign-in" />} /> 
+                            <Route path="signup" element={<UserAuthForm type="sign-up" />} />
+                            <Route path="search/:query" element={<SearchPage />} />
+                            <Route path="user/:id" element={<ProfilePage />} />
+                            <Route path="post/:post_id" element={<PostPage />}/>
+                            <Route path="*" element={<PageNotFound />} /> 
                         </Route>
-                        <Route path="settings" element={<SideNav />} >  
-                            <Route path="edit-profile" element={<EditProfile />} />
-                            <Route path="change-password" element={<ChangePassword />} />
-                        </Route>
-                        <Route path="signin" element={<UserAuthForm type="sign-in" />} /> 
-                        <Route path="signup" element={<UserAuthForm type="sign-up" />} />
-                        <Route path="search/:query" element={<SearchPage />} />
-                        <Route path="user/:id" element={<ProfilePage />} />
-                        <Route path="post/:post_id" element={<PostPage />}/>
-                        <Route path="*" element={<PageNotFound />} /> 
-                    </Route>
-                </Routes>
-            </UserContext.Provider>
-        </ThemeContext.Provider>
+                    </Routes>
+                </UserContext.Provider>
+            </ThemeContext.Provider>
+        </HelmetProvider>
     );
 
 }
