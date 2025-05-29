@@ -14,7 +14,8 @@ import { Helmet } from 'react-helmet-async';
 export const postStructure = {
     title: '',
     des: '',
-    conent: [],
+    content: [],
+    tags: [],
     author: { personal_info: { } },
     bannerUrl: '',
     publishedAt: '',
