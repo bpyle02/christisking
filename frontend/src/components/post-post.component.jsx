@@ -11,33 +11,6 @@ const PostPostCard = ({ content, author }) => {
     let [ pageState, setPageState ] = useState("home");
 
     return ( 
-        // <Link to={`/post/${id}`} className="flex gap-8 items-center border-b border-grey pb-5 mb-4">
-        //     <div className="w-full">
-        //         <div className="flex gap-2 items-center mb-7">
-        //             <img src={profile_img} referrerPolicy="no-referrer" className="w-6 h-6 rounded-full" />
-        //             <p className="line-clamp-1">{fullname} @{username}</p>
-        //             <p className="min-w-fit">{ getDay(publishedAt) }</p>
-        //         </div>
-
-        //         <h1 className="post-title">{title}</h1>
-
-        //         <p className="my-3 text-xl font-gelasio leading-7 max-sm:hidden md:max-[1100px]:hidden line-clamp-2">{des}</p>
-
-        //         <div className="flex gap-4 mt-7">
-        //             <span className="btn-light py-1 px-4">{tags[0]}</span>
-        //             <span className="ml-3 flex items-center gap-2 text-dark-grey">
-        //                 <i className="fi fi-rr-heart text-xl"></i>
-        //                 { total_likes }
-        //             </span>
-        //         </div>
-
-        //     </div>
-            
-        //     <div className="h-28 aspect-sqaure bg-grey">
-        //         <img src={bannerUrl} className="w-full h-full aspect-square object-cover" />
-        //     </div>
-
-        // </Link>
 
         <Link to={`/post/${id}`}>
             <div className="mb-8">
@@ -69,8 +42,11 @@ const PostPostCard = ({ content, author }) => {
                                 <i className="fi fi-rr-heart text-xl"></i>
                                 { total_likes }
                             </span>
-                            {tags.slice(0, 4).map((tag) => (
-                                <p className={"text-sm tag " + (pageState == tag ? " bg-black text-white " : " ")}>
+                            {tags.slice(0, 4).map((tag, index) => (
+                                <p
+                                    key={`${tag}-${index}`}
+                                    className={"text-sm tag " + (pageState == tag ? " bg-black text-white " : " ")}
+                                >
                                     {tag}
                                 </p>
                             ))}

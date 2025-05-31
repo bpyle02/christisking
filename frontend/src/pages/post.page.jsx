@@ -34,7 +34,7 @@ const PostPage = () => {
     const [ commentsWrapper, setCommentsWrapper ] = useState(false);
     const [ totalParentCommentsLoaded, setTotalParentCommentsLoaded ] = useState(0);
 
-    let { title, content, des, bannerUrl, author: { personal_info: { fullname, username: author_username , profile_img } }, publishedAt } = post;
+    let { title, content, des, bannerUrl, tags, author: { personal_info: { fullname, username: author_username , profile_img } }, publishedAt } = post;
 
     const fetchPost = () => {
         axios.post(import.meta.env.VITE_NODE_SERVER_DOMAIN + "/get-post", { post_id })
