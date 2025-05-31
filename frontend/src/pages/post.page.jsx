@@ -83,7 +83,7 @@ const PostPage = () => {
                 <meta property="og:title" content={`christisking | ${title}`} />
                 <meta property="og:description" content={des} />
                 <meta property="og:image" content={bannerUrl} />
-                <meta property="og:url" content={`https://christisking.info/user/${profile_username}`} />
+                <meta property="og:url" content={`https://christisking.info/user/${personal_info.username}`} />
                 <meta name="twitter:card" content="summary_large_image" />
             </Helmet>
 
